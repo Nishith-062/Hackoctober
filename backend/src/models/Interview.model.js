@@ -10,11 +10,11 @@ const InterviewSchema = new mongoose.Schema(
         type:String,
         required:true
     },
-    datetime: {
+    scheduled_at: {
       type: Date,
       required: true,
     },
-    duration: {
+    duration_minutes: {
       type: Number,
       required: true,
     },
@@ -24,23 +24,29 @@ const InterviewSchema = new mongoose.Schema(
     },
     difficulty_level: {
       type: String,
-      enum: ["easy", "medium", "hard"],
-      default: "easy",
+      enum: ["Easy", "Medium", "Hard"], // matches your frontend form
+      default: "Easy",
     },
     status: {
       type: String,
       enum: ["scheduled", "in_progress", "completed", "cancelled"],
       default: "scheduled",
     },
+    candcandidate_id:{
+      type:String,
+      required:true
+    },
     interviewer_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      type:String,
       required: true,
     },
-    problemset_id: {
+    problem_set_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Problemset", 
     },
+    description:{
+      type:String
+    }
   },
   {
     timestamps: { createdAt: "created_at", updatedAt: false },

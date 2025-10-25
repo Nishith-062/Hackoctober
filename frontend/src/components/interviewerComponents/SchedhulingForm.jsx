@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useApi } from "../../api/useApi";
 
 const SchedulingForm = () => {
   const [formData, setFormData] = useState({
@@ -21,21 +22,27 @@ const SchedulingForm = () => {
     }));
   };
 
+  const api = useApi();
+
   // This is the main function for your logic
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Keep this to prevent page reload
-    
+
+    const res = await api.post("/interviewer/scheduleInterview", formData);
+
+    console.log(res.data);
+
     // --- YOUR FUNCTIONALITY HERE ---
     console.log("Interview Scheduled:", formData);
     // ---
-    
+
     // Manually close the modal after logic is done
-    document.getElementById('my_modal_1').close();
+    document.getElementById("my_modal_1").close();
   };
 
   // Simple handler to close modal on "Cancel"
   const handleCancel = () => {
-    document.getElementById('my_modal_1').close();
+    document.getElementById("my_modal_1").close();
   };
 
   return (
@@ -198,16 +205,16 @@ const SchedulingForm = () => {
 
         {/* Modal Actions */}
         <div className="modal-action mt-6">
-          <button 
-            type="button" 
+          <button
+            type="button"
             className="btn btn-ghost"
             onClick={handleCancel}
           >
             Cancel
           </button>
-          
-          <button 
-            type="submit" 
+
+          <button
+            type="submit"
             className="btn btn-primary"
             // This will trigger onSubmit, which now also closes the modal
           >
