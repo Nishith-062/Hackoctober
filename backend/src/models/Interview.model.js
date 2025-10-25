@@ -37,11 +37,6 @@ const InterviewSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    candidate_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User", 
-      required: true,
-    },
     problemset_id: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Problemset", 
