@@ -8,64 +8,30 @@ import { useEffect } from "react";
 import { useApi } from "../../../api/useApi";
 
 const InterviewerDashboard = () => {
-  const [interviewData,setInterviewData]=useState([])
-  const statData = [
-    {
-      id: 1,
-      label: "Upcoming Interviews",
-      value: "3",
-    },
-    {
-      id: 2,
-      label: "This Week",
-      value: "5",
-    },
-    {
-      id: 3,
-      label: "Total Completed",
-      value: "24",
-    },
-  ];
-  const api=useApi()
+  const [interviewData, setInterviewData] = useState([]);
+  const [stats, setStats] = useState({
+    "Upcoming Interviews": 0,
+    "This Week": 0,
+    "Total Completed": 0,
+  });
+  const api = useApi();
 
   async function InterviewData() {
-    const res=await api.get('/interviewer/')
+    const res = await api.get("/interviewer/");
     console.log(res.data);
-    setInterviewData(res.data.interviews)
-    
+    setInterviewData(res.data.interviews);
+  }
+  async function StatsData() {
+    const res = await api.get("/interviewer/stats");
+    console.log(res.data);
+    setStats(res.data);
   }
 
-  // const interviewData = [
-  //   {
-  //     id: 1,
-  //     title: "Frontend Developer Interview",
-  //     status: "scheduled",
-  //     difficulty: "Medium",
-  //     candidate: "John Doe",
-  //     date: "Sun, Oct 26, 2025",
-  //     time: "10:00 AM (60 min)",
-  //     language: "JavaScript",
-  //   },
-  //   {
-  //     id: 2,
-  //     title: "Backend Engineer Interview",
-  //     status: "scheduled",
-  //     difficulty: "Hard",
-  //     candidate: "Jane Smith",
-  //     date: "Sun, Oct 26, 2025",
-  //     time: "02:00 PM (90 min)",
-  //     language: "Python",
-  //   },
-  // ];
-
   useEffect(() => {
+    InterviewData();
+    StatsData();
+  }, []);
 
-    InterviewData()
-  
-    
-  },[])
-
-  
   return (
     <div className="p-2 space-y-6">
       {/* Interviewer Dashboard */}
@@ -85,12 +51,8 @@ const InterviewerDashboard = () => {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {statData.map((stat) => (
-          <InterviewerStatCard
-            key={stat._id}
-            label={stat.label}
-            value={stat.value}
-          />
+        {Object.entries(stats).map(([label, value]) => (
+          <InterviewerStatCard key={label} label={label} value={value} />
         ))}
       </div>
 
@@ -111,7 +73,7 @@ const InterviewerDashboard = () => {
       </div> */}
 
       <dialog id="my_modal_1" className="modal">
-        <SchedhulingForm/>
+        <SchedhulingForm />
       </dialog>
     </div>
   );

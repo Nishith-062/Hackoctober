@@ -41,7 +41,7 @@ const InterviewSchema = new mongoose.Schema(
       required: true,
     },
     problem_set_id: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Number,
       ref: "Problemset", 
     },
     description:{

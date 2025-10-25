@@ -18,26 +18,19 @@ import SidebarLayout from "./layout/SidebarLayout";
 import UpcomingEvents from "./pages/candiates/upcoming-events/upcomingEvents";
 import MySession from "./pages/candiates/interview-recordings/MySession";
 import InterviewerDashboard from "./pages/interviewer/interviewerDashboard/InterviewerDashboard";
+import { useAuthStore } from "./store/useAuthStore";
+import InterviewerRoom from "./pages/interviewer/interviewerRoom/InterviewerRoom";
 
 export default function App() {
   const navigate = useNavigate();
-  const [dark,setDark]=useState(true)
+  const [dark, setDark] = useState(true);
   const api = useApi();
+  const { syncUser } = useAuthStore();
 
   const { user, isLoaded } = useUser();
   useEffect(() => {
-    if (user) {
-      console.log(user.emailAddresses[0].emailAddress);
-      
-      api.post("/auth/sync", {
-        email:user.emailAddresses[0].emailAddress,
-        fullName: `${user.firstName} ${user.lastName}` || user.username,
-        imageUrl: user.imageUrl,
-      });
-
-    }
-    
-  }, [user]);
+    if (user) syncUser(user, api);
+  }, [user, syncUser]);
 
   if (!isLoaded) {
     return (
@@ -47,14 +40,13 @@ export default function App() {
     );
   }
 
-  function handleTheme(){
-    setDark(!dark)
+  function handleTheme() {
+    setDark(!dark);
   }
 
-
   return (
-    <div data-theme={dark?'dark':'light'}>
-      <Navbar handleTheme={handleTheme} dark={dark}/>
+    <div data-theme={dark ? "dark" : "light"}>
+      <Navbar handleTheme={handleTheme} dark={dark} />
       <SignedOut>
         <Signin />
 
@@ -67,11 +59,13 @@ export default function App() {
           <Route element={<SidebarLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/settings" element={<div>settings</div>} />
-            <Route path="/upcoming-events" element={<UpcomingEvents/>}/>
-            <Route path="/session-recodings" element={<MySession/>}/>
-            <Route path="/interviewer-upcoming-events" element={<InterviewerDashboard/>}/>
-
-
+            <Route path="/upcoming-events" element={<UpcomingEvents />} />
+            <Route path="/session-recodings" element={<MySession />} />
+            <Route
+              path="/interviewer-upcoming-events"
+              element={<InterviewerDashboard />}
+            />
+            <Route path="/interviwer/:token" element={<InterviewerRoom />} />
           </Route>
         </Routes>
       </SignedIn>

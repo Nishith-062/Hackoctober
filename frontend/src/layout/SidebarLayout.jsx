@@ -11,8 +11,10 @@ import {
   MonitorPlay,
 } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useAuthStore } from "../store/useAuthStore";
 
 const SidebarLayout = () => {
+  const {user}=useAuthStore()
   return (
     <div className="drawer drawer-open">
       <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -59,7 +61,7 @@ const SidebarLayout = () => {
             </li>
 
             {/* Settings */}
-            <li>
+{user && user.role==='candidate' && <li>
               <Link
                 to={"/upcoming-events"}
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
@@ -68,7 +70,7 @@ const SidebarLayout = () => {
                 <CalendarDays className="inline-block size-4 my-1.5" />
                 <span className="is-drawer-close:hidden">Upcoming events </span>
               </Link>
-            </li>
+            </li>}
 
             {/* session recodings */}
             <li>
@@ -84,7 +86,7 @@ const SidebarLayout = () => {
 
 
 
-              <li>
+              {user && user.role==='interviewer' && <li>
               <Link
                 to={"/interviewer-upcoming-events"}
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
@@ -93,7 +95,7 @@ const SidebarLayout = () => {
                 <CalendarDays className="inline-block size-4 my-1.5" />
                 <span className="is-drawer-close:hidden">Upcoming events </span>
               </Link>
-            </li>
+            </li>}
           </ul>
         </div>
       </div>

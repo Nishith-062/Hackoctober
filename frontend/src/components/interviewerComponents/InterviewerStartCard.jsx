@@ -1,5 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { CalendarDays, Clock } from "lucide-react"; // Icons for details
+import { useApi } from "../../api/useApi";
+import { useNavigate } from "react-router-dom";
 
 function DetailItem({ icon, text }) {
   return (
@@ -30,11 +32,19 @@ function DifficultyBadge({ difficulty }) {
     </span>
   );
 }
-
 /**
  * The reusable InterviewCard component
  */
 function InterviewerStartCard({ interview }) {
+  const [token,setToken]=useState('')
+  const navigate=useNavigate()
+  const api=useApi()
+  async function StartInterview(){
+    const res=await api.post('/interviewer/create',{interviewId:interview._id})
+    setToken(res.data.token)
+    navigate(`/interviwer/${token}`)
+    
+  }
   return (
     <div className="card w-full bg-base-100 shadow-lg rounded-lg border border-base-300/30">
       <div className="card-body p-4 sm:p-6">
@@ -91,7 +101,7 @@ function InterviewerStartCard({ interview }) {
 
           {/* Right Side: Button */}
           <div className="flex-shrink-0 mt-4 sm:mt-0">
-            <button className="btn btn-primary w-full sm:w-auto">
+            <button className="btn btn-primary w-full sm:w-auto" onClick={StartInterview}>
               Start Interview
             </button>
           </div>

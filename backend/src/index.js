@@ -4,6 +4,7 @@ import { clerkMiddleware, requireAuth } from '@clerk/express'
 import { connectDB } from './config/db.js'
 import authRoutes from './routes/auth.route.js'
 import scheduleinterviewRoute from './routes/interview.route.js'
+import candidateRoutes from './routes/candidate.route.js'
 import cors from 'cors'
 
 
@@ -16,6 +17,7 @@ app.use(clerkMiddleware())
 
 app.use('/api/auth',authRoutes)
 app.use('/api/interviewer',scheduleinterviewRoute)
+app.use('/api/candidate',candidateRoutes)
 
 app.listen(PORT,()=>{
     console.log(`running on http://localhost:3000`);

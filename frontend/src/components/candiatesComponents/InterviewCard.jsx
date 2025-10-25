@@ -52,11 +52,11 @@ export default function InterviewCard({ interview }) {
         {/* Card Header: Title, Badges, and Button */}
         <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
           <div className="flex items-center gap-3 flex-wrap">
-            <h2 className="card-title text-lg md:text-xl">{interview.title}</h2>
+            <h2 className="card-title text-lg md:text-xl">{interview.title || 'John'}</h2>
             
             {/* daisyUI 'badge' components */}
             <div className="badge badge-info badge-sm badge-outline font-medium capitalize">{interview.status}</div>
-            <DifficultyBadge difficulty={interview.difficulty} />
+            <DifficultyBadge difficulty={interview.difficulty_level} />
           </div>
           
           {/* daisyUI 'btn' component */}
@@ -73,20 +73,32 @@ export default function InterviewCard({ interview }) {
           <DetailItem 
             icon={<User />} 
             label="Interviewer" 
-            value={interview.interviewer} 
+            value={interview.interviewer || 'john'} 
           />
           <DetailItem 
             icon={<CalendarDays />} 
-            value={interview.date} 
-          />
+                value={new Date(interview.scheduled_at).toLocaleDateString(
+                  undefined,
+                  {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }
+                )}          />
           <DetailItem 
             icon={<Clock />} 
-            value={interview.time} 
-          />
+                value={new Date(interview.scheduled_at).toLocaleTimeString(
+                  undefined,
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  }
+                )}          />
           <DetailItem 
             // Special color for this icon as seen in the image
             icon={<Timer size={16} className="text-blue-500" />} 
-            value={interview.timeLeft} 
+            value={`${interview.duration_minutes}min` || "NAN"} 
           />
         </div>
 

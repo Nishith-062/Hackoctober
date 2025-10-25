@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import EventsCard from "../../../components/candiatesComponents/EventsCard";
 import InterviewCard from "../../../components/candiatesComponents/InterviewCard";
 import CompletedInterviewCard from "../../../components/candiatesComponents/RecentCompletedCard";
+import { useApi } from "../../../api/useApi";
+import { useEffect } from "react";
 
 const UpcomingEvents = () => {
   // Use useState to store analytics
@@ -31,32 +33,23 @@ const UpcomingEvents = () => {
   // }
 ];
 
-  const interviewData = [
-    {
-      id: 1,
-      title: "Frontend Developer Interview",
-      status: "scheduled",
-      difficulty: "Medium",
-      interviewer: "Sarah Wilson",
-      date: "Sun, Oct 26, 2025",
-      time: "10:00 AM (60 min)",
-      timeLeft: "14h 25m",
-      language: "JavaScript",
-      problemSet: "React Fundamentals",
-    },
-    {
-      id: 2,
-      title: "Backend Engineer Interview",
-      status: "scheduled",
-      difficulty: "Hard",
-      interviewer: "Michael Chen",
-      date: "Mon, Oct 27, 2025",
-      time: "02:00 PM (90 min)",
-      timeLeft: "1d 18h",
-      language: "Python",
-      problemSet: "System Design",
-    },
-  ];
+const api=useApi()
+const [interviewData,setInteviewData]=useState([])
+
+useEffect(()=>{
+
+  async function fetchIterview() {
+    const res=await api.get('/candidate/get-interviews')
+    console.log(res.data.interviews);
+    setInteviewData(res.data.interviews)
+    
+
+  }
+  fetchIterview()
+
+},[])
+
+
 
   return (
     <div className="p-2 space-y-6">
@@ -73,7 +66,7 @@ const UpcomingEvents = () => {
       <h1 className="text-xl">Upcoming Interviews</h1>
       <div className="space-y-6">
         {interviewData.map((interview) => (
-          <InterviewCard key={interview.id} interview={interview} />
+          <InterviewCard key={interview._id} interview={interview} />
         ))}
       </div>
       </div>
