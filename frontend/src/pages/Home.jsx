@@ -10,8 +10,6 @@ export default function Home() {
   const { user } = useUser();
   const api = useApi();
 
-
-
   return (
     <div>
       <h1>Welcome {user.fullName}</h1>

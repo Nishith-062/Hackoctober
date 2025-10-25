@@ -30,11 +30,6 @@ const userSchema = new mongoose.Schema(
       required: true,
       default: "candidate",
     },
-    status: {
-      type: String,
-      enum: ["active", "inactive"],
-      default: "active",
-    },
   },
   { timestamps: true } 
 );
