@@ -1,9 +1,7 @@
 import express, { Router } from 'express';
 
-
-import {} from '../../controllers/InterviewerControllers/scheduleinterview.controller.js'
-import { getInterviews } from '../../controllers/InterviewerControllers/scheduleinterview.controller.js';
-
+import { getInterviews } from '../controllers/interview.controller.js';
+import { scheduleInterview } from '../controllers/interview.controller.js';
 const router=express.Router();
 
 // post interview

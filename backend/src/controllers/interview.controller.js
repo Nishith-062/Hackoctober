@@ -1,10 +1,12 @@
 import Interview from "../models/Interview.js";
 import User from "../models/User.js";
 import ProblemSet from "../models/ProblemSet.js";
-
+import { getAuth } from "@clerk/express";
 // Schedule a new interview
 export const scheduleInterview = async (req, res) => {
   try {
+    const { userId } = getAuth(req);
+       let user = await User.findOne({ clerkId: userId });
     const {
       title,
       scheduled_at,
@@ -26,7 +28,7 @@ export const scheduleInterview = async (req, res) => {
     ) {
       return res.status(400).json({ message: "All fields are required" });
     }
-    const interviewer = await User.findById(req.user._id);
+    const interviewer = await User.findById(user);
     if (!interviewer || interviewer.role !== "interviewer") {
       return res.status(403).json({ message: "Only interviewers can schedule interviews" });
     }

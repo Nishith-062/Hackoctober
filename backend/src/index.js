@@ -3,7 +3,7 @@ import dotenv from 'dotenv'
 import { clerkMiddleware, requireAuth } from '@clerk/express'
 import { connectDB } from './config/db.js'
 import authRoutes from './routes/auth.route.js'
-import scheduleinterviewRoute from '../src/routes/InterviewerRoutes/scheduleinterview.route.js'
+import scheduleinterviewRoute from './routes/interview.route.js'
 import cors from 'cors'
 
 
