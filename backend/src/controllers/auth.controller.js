@@ -20,7 +20,6 @@ export const authCallBack = async (req, res) => {
       });
       await user.save();
     }
-
     res.status(200).json({ success: true, user });
   } catch (error) {
     console.error("Error in auth callback:", error);
