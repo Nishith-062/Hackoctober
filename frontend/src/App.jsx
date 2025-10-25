@@ -20,6 +20,13 @@ import MySession from "./pages/candiates/interview-recordings/MySession";
 import InterviewerDashboard from "./pages/interviewer/interviewerDashboard/InterviewerDashboard";
 import { useAuthStore } from "./store/useAuthStore";
 import InterviewerRoom from "./pages/interviewer/interviewerRoom/InterviewerRoom";
+import {
+  LiveblocksProvider,
+  RoomProvider,
+  ClientSideSuspense,
+} from "@liveblocks/react/suspense";
+import { CollaborativeEditor } from "./CollaborativeEditor";
+import { client } from "../liveblocks.config";
 
 export default function App() {
   const navigate = useNavigate();
@@ -49,25 +56,42 @@ export default function App() {
       <Navbar handleTheme={handleTheme} dark={dark} />
       <SignedOut>
         <Signin />
-
-        {/* <SignInButton /> */}
         <SignUp routing="path" path="/sign-up" />
       </SignedOut>
 
       <SignedIn>
-        <Routes>
-          <Route element={<SidebarLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/settings" element={<div>settings</div>} />
-            <Route path="/upcoming-events" element={<UpcomingEvents />} />
-            <Route path="/session-recodings" element={<MySession />} />
-            <Route
-              path="/interviewer-upcoming-events"
-              element={<InterviewerDashboard />}
-            />
-            <Route path="/interviwer/:token" element={<InterviewerRoom />} />
-          </Route>
-        </Routes>
+        <LiveblocksProvider
+          publicApiKey={
+            "pk_dev_pkxO4QbpECLah-ZRKhPSilMQHi-uKvGII2AzemnVWyi0Tc3rKS0HkJq7MMNh7GCh"
+          }
+        >
+          <RoomProvider client={client} id="my-room">
+            <Routes>
+              <Route element={<SidebarLayout />}>
+                <Route path="/" element={<Home />} />
+                <Route path="/settings" element={<div>settings</div>} />
+                <Route path="/upcoming-events" element={<UpcomingEvents />} />
+                <Route path="/session-recodings" element={<MySession />} />
+                <Route
+                  path="/interviewer-upcoming-events"
+                  element={<InterviewerDashboard />}
+                />
+                <Route
+                  path="/code"
+                  element={
+                    <ClientSideSuspense fallback={<div>Loading…</div>}>
+                      <CollaborativeEditor />
+                    </ClientSideSuspense>
+                  }
+                />
+                <Route
+                  path="/interviwer/:token"
+                  element={<InterviewerRoom />}
+                />
+              </Route>
+            </Routes>
+          </RoomProvider>
+        </LiveblocksProvider>
       </SignedIn>
     </div>
   );

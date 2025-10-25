@@ -11,8 +11,12 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.53.3",
+    "@liveblocks/client": "^3.9.1",
+    "@liveblocks/react": "^3.9.1",
+    "@liveblocks/yjs": "^3.9.1",
     "@livekit/components-react": "^2.9.15",
     "@livekit/components-styles": "^1.1.6",
+    "@monaco-editor/react": "^4.7.0",
     "@tailwindcss/vite": "^4.1.16",
     "axios": "^1.12.2",
     "daisyui": "^5.3.9",
@@ -23,6 +27,9 @@
     "react-dom": "^19.1.1",
     "react-router-dom": "^7.9.4",
     "tailwindcss": "^4.1.16",
+    "y-monaco": "^0.1.6",
+    "y-protocols": "^1.0.6",
+    "yjs": "^13.6.27",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
