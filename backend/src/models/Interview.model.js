@@ -32,7 +32,7 @@ const InterviewSchema = new mongoose.Schema(
       enum: ["scheduled", "in_progress", "completed", "cancelled"],
       default: "scheduled",
     },
-    candcandidate_id:{
+    candidate_id:{
       type:String,
       required:true
     },

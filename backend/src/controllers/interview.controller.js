@@ -1,4 +1,4 @@
-import Interview from "../models/interviewSession.model.js";
+import Interview from "../models/Interview.model.js";
 import {User} from "../models/user.model.js";
 import ProblemSet from "../models/problem.model.js";
 import { getAuth } from "@clerk/express";
@@ -25,6 +25,8 @@ export const scheduleInterview = async (req, res) => {
       programmingLanguage,
       time,
     } = req.body;
+    console.log(req.body);
+    
 
     // 3️⃣ Map frontend -> backend naming convention
     const title = interviewTitle;
@@ -60,6 +62,8 @@ export const scheduleInterview = async (req, res) => {
     }
 
     // 6️⃣ (Optional) You can remove this if problem sets aren’t used yet
+    console.log(candidate);
+    
     let problemSet = null;
     if (problem_set_id) {
       problemSet = await ProblemSet.findById(problem_set_id);
@@ -75,8 +79,8 @@ export const scheduleInterview = async (req, res) => {
       scheduled_at,
       duration_minutes,
       programming_language,
+      candidate_email,
       difficulty_level,
-      status: "scheduled",
       interviewer_id: interviewer.clerkId,
       candidate_id: candidate.clerkId,
       problem_set_id: problemSet ? problemSet._id : null,
@@ -93,9 +97,6 @@ export const scheduleInterview = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
-
-
 
 // get interviews
 export const getInterviews = async (req, res) => {

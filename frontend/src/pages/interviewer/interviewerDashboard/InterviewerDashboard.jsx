@@ -3,8 +3,12 @@ import React from "react";
 import InterviewerStatCard from "../../../components/interviewerComponents/interviewerStatCard";
 import InterviewerStartCard from "../../../components/interviewerComponents/InterviewerStartCard";
 import SchedhulingForm from "../../../components/interviewerComponents/SchedhulingForm";
+import { useState } from "react";
+import { useEffect } from "react";
+import { useApi } from "../../../api/useApi";
 
 const InterviewerDashboard = () => {
+  const [interviewData,setInterviewData]=useState([])
   const statData = [
     {
       id: 1,
@@ -22,30 +26,46 @@ const InterviewerDashboard = () => {
       value: "24",
     },
   ];
+  const api=useApi()
 
-  const interviewData = [
-    {
-      id: 1,
-      title: "Frontend Developer Interview",
-      status: "scheduled",
-      difficulty: "Medium",
-      candidate: "John Doe",
-      date: "Sun, Oct 26, 2025",
-      time: "10:00 AM (60 min)",
-      language: "JavaScript",
-    },
-    {
-      id: 2,
-      title: "Backend Engineer Interview",
-      status: "scheduled",
-      difficulty: "Hard",
-      candidate: "Jane Smith",
-      date: "Sun, Oct 26, 2025",
-      time: "02:00 PM (90 min)",
-      language: "Python",
-    },
-  ];
+  async function InterviewData() {
+    const res=await api.get('/interviewer/')
+    console.log(res.data);
+    setInterviewData(res.data.interviews)
+    
+  }
 
+  // const interviewData = [
+  //   {
+  //     id: 1,
+  //     title: "Frontend Developer Interview",
+  //     status: "scheduled",
+  //     difficulty: "Medium",
+  //     candidate: "John Doe",
+  //     date: "Sun, Oct 26, 2025",
+  //     time: "10:00 AM (60 min)",
+  //     language: "JavaScript",
+  //   },
+  //   {
+  //     id: 2,
+  //     title: "Backend Engineer Interview",
+  //     status: "scheduled",
+  //     difficulty: "Hard",
+  //     candidate: "Jane Smith",
+  //     date: "Sun, Oct 26, 2025",
+  //     time: "02:00 PM (90 min)",
+  //     language: "Python",
+  //   },
+  // ];
+
+  useEffect(() => {
+
+    InterviewData()
+  
+    
+  },[])
+
+  
   return (
     <div className="p-2 space-y-6">
       {/* Interviewer Dashboard */}
@@ -67,7 +87,7 @@ const InterviewerDashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {statData.map((stat) => (
           <InterviewerStatCard
-            key={stat.id}
+            key={stat._id}
             label={stat.label}
             value={stat.value}
           />
@@ -79,7 +99,7 @@ const InterviewerDashboard = () => {
         <h1 className="text-xl">Upcoming Interviews</h1>
         <div className="max-w-full mx-auto space-y-6">
           {interviewData.map((interview) => (
-            <InterviewerStartCard key={interview.id} interview={interview} />
+            <InterviewerStartCard key={interview._id} interview={interview} />
           ))}
         </div>
       </div>

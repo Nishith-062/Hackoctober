@@ -27,11 +27,16 @@ export default function App() {
   const { user, isLoaded } = useUser();
   useEffect(() => {
     if (user) {
+      console.log(user.emailAddresses[0].emailAddress);
+      
       api.post("/auth/sync", {
+        email:user.emailAddresses[0].emailAddress,
         fullName: `${user.firstName} ${user.lastName}` || user.username,
         imageUrl: user.imageUrl,
       });
+
     }
+    
   }, [user]);
 
   if (!isLoaded) {

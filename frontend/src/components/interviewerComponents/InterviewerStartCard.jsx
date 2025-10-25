@@ -1,6 +1,5 @@
-import React from 'react'
-import { CalendarDays, Clock } from 'lucide-react'; // Icons for details
-
+import React from "react";
+import { CalendarDays, Clock } from "lucide-react"; // Icons for details
 
 function DetailItem({ icon, text }) {
   return (
@@ -16,13 +15,17 @@ function DetailItem({ icon, text }) {
  */
 function DifficultyBadge({ difficulty }) {
   const difficultyClasses = {
-    "Easy": "badge-success",
-    "Medium": "badge-warning",
-    "Hard": "badge-error",
+    Easy: "badge-success",
+    Medium: "badge-warning",
+    Hard: "badge-error",
   };
-  
+
   return (
-    <span className={`badge badge-sm font-medium capitalize ${difficultyClasses[difficulty] || 'badge-ghost'}`}>
+    <span
+      className={`badge badge-sm font-medium capitalize ${
+        difficultyClasses[difficulty] || "badge-ghost"
+      }`}
+    >
       {difficulty}
     </span>
   );
@@ -36,33 +39,52 @@ function InterviewerStartCard({ interview }) {
     <div className="card w-full bg-base-100 shadow-lg rounded-lg border border-base-300/30">
       <div className="card-body p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          
           {/* Left Side: Details */}
           <div className="flex-grow">
             {/* Top Row: Title and Badges */}
             <div className="flex items-center flex-wrap gap-2 mb-3">
-              <h2 className="card-title text-lg md:text-xl">{interview.title}</h2>
+              <h2 className="card-title text-lg md:text-xl">
+                {interview.title}
+              </h2>
               <span className="badge badge-info badge-sm font-medium capitalize badge-outline">
                 {interview.status}
               </span>
-              <DifficultyBadge difficulty={interview.difficulty} />
+              <DifficultyBadge difficulty={interview.difficulty_level} />
             </div>
 
             {/* Bottom Row: Interview Meta Details */}
             <div className="flex flex-col sm:flex-row sm:items-center flex-wrap gap-x-4 gap-y-2 text-sm">
               <p className="text-base-content/80">
-                <span className="font-medium">Candidate:</span> {interview.candidate}
+                <span className="font-medium">Candidate:</span>{" "}
+                {interview.candidate_name}
               </p>
-              <DetailItem 
+              <DetailItem
                 icon={<CalendarDays size={14} />}
-                text={interview.date}
+                text={new Date(interview.scheduled_at).toLocaleDateString(
+                  undefined,
+                  {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  }
+                )}
               />
-              <DetailItem 
+
+              <DetailItem
                 icon={<Clock size={14} />}
-                text={interview.time}
+                text={new Date(interview.scheduled_at).toLocaleTimeString(
+                  undefined,
+                  {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                    hour12: true,
+                  }
+                )}
               />
+
               <p className="text-base-content/80">
-                <span className="font-medium">Language:</span> {interview.language}
+                <span className="font-medium">Language:</span>{" "}
+                {interview.programming_language}
               </p>
             </div>
           </div>
@@ -79,4 +101,4 @@ function InterviewerStartCard({ interview }) {
   );
 }
 
-export default InterviewerStartCard
+export default InterviewerStartCard;

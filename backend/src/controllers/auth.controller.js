@@ -4,7 +4,8 @@ import { User } from "../models/user.model.js"; // ensure .js if using ES module
 export const authCallBack = async (req, res) => {
   try {
     const { userId } = getAuth(req)
-    const { fullName, imageUrl } = req.body;
+    const { fullName, imageUrl ,email} = req.body;
+    console.log(email)
 
     if (!userId || !fullName) {
       return res.status(400).json({ success: false, message: "Missing required fields" });
@@ -17,6 +18,7 @@ export const authCallBack = async (req, res) => {
         clerkId: userId,
         fullName: fullName,
         imageUrl: imageUrl || null,
+        email:email
       });
       await user.save();
     }
