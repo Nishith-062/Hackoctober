@@ -3,7 +3,6 @@ import { useEffect } from "react";
 import { useApi } from "../api/useApi";
 import Navbar from "../components/Navbar";
 import React from "react";
-import Siderbar from "../components/Siderbar";
 
 
 export default function Home() {

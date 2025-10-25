@@ -1,7 +1,15 @@
 // src/layouts/SidebarLayout.jsx
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Layout, ArrowRight, Home, Settings } from "lucide-react";
+import {
+  Layout,
+  ArrowRight,
+  Home,
+  Settings,
+  CalendarDays,
+  ArrowBigRight,
+  MonitorPlay,
+} from "lucide-react";
 import { Link } from "react-router-dom";
 
 const SidebarLayout = () => {
@@ -15,7 +23,7 @@ const SidebarLayout = () => {
         </div>
       </div>
 
-      <div className="drawer-side is-drawer-close:overflow-visible">
+      <div className="drawer-side ">
         {/* button to open/close drawer */}
         <label
           htmlFor="my-drawer-4"
@@ -31,7 +39,7 @@ const SidebarLayout = () => {
             htmlFor="my-drawer-4"
             className="btn btn-ghost bg-base-200 btn-circle drawer-button is-drawer-open:rotate-y-180"
           >
-            <Layout className="inline-block size-4 my-1.5" />
+            <ArrowBigRight className="inline-block size-4 my-1.5" />
           </label>
         </div>
 
@@ -41,7 +49,7 @@ const SidebarLayout = () => {
             {/* Homepage */}
             <li>
               <Link
-              to='/'
+                to="/"
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
                 data-tip="Homepage"
               >
@@ -53,12 +61,37 @@ const SidebarLayout = () => {
             {/* Settings */}
             <li>
               <Link
-              to={'/settings'}
+                to={"/upcoming-events"}
                 className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
-                data-tip="Settings"
+                data-tip="Upcoming events"
               >
-                <Settings className="inline-block size-4 my-1.5" />
-                <span className="is-drawer-close:hidden">Settings</span>
+                <CalendarDays className="inline-block size-4 my-1.5" />
+                <span className="is-drawer-close:hidden">Upcoming events </span>
+              </Link>
+            </li>
+
+            {/* session recodings */}
+            <li>
+              <Link
+                to={"/session-recodings"}
+                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                data-tip="Session Recodings"
+              >
+                <MonitorPlay className="inline-block size-4 my-1.5"/>
+                <span className="is-drawer-close:hidden">Session Recodings </span>
+              </Link>
+            </li>
+
+
+
+              <li>
+              <Link
+                to={"/interviewer-upcoming-events"}
+                className="is-drawer-close:tooltip is-drawer-close:tooltip-right"
+                data-tip="Upcoming events"
+              >
+                <CalendarDays className="inline-block size-4 my-1.5" />
+                <span className="is-drawer-close:hidden">Upcoming events </span>
               </Link>
             </li>
           </ul>

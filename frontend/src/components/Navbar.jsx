@@ -1,8 +1,8 @@
 import { UserButton } from "@clerk/clerk-react";
+import { Moon, Sun } from "lucide-react";
 import React from "react";
-import Siderbar from "./Siderbar";
 
-export default function Navbar() {
+export default function Navbar({handleTheme,dark}) {
   return (
     <div>
       <div className="navbar bg-base-300 w-full">
@@ -12,7 +12,7 @@ export default function Navbar() {
           <ul className="menu menu-horizontal">
             {/* Navbar menu content here */}
             <li>
-              <a>Navbar Item 1</a>
+              <button onClick={handleTheme}>{dark?<Sun />:<Moon />}</button>
             </li>
             <li>
               <UserButton/>

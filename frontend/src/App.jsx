@@ -8,16 +8,20 @@ import {
   useUser,
 } from "@clerk/clerk-react";
 import Home from "./pages/Home";
-import React from "react";
+import React, { useState } from "react";
 import { useEffect } from "react";
 import { useDeferredValue } from "react";
 import { useApi } from "./api/useApi";
 import Signin from "./pages/sign-in/Signin";
 import Navbar from "./components/Navbar";
 import SidebarLayout from "./layout/SidebarLayout";
+import UpcomingEvents from "./pages/candiates/upcoming-events/upcomingEvents";
+import MySession from "./pages/candiates/interview-recordings/MySession";
+import InterviewerDashboard from "./pages/interviewer/interviewerDashboard/InterviewerDashboard";
 
 export default function App() {
   const navigate = useNavigate();
+  const [dark,setDark]=useState(true)
   const api = useApi();
 
   const { user, isLoaded } = useUser();
@@ -38,9 +42,14 @@ export default function App() {
     );
   }
 
+  function handleTheme(){
+    setDark(!dark)
+  }
+
+
   return (
-    <>
-      <Navbar />
+    <div data-theme={dark?'dark':'light'}>
+      <Navbar handleTheme={handleTheme} dark={dark}/>
       <SignedOut>
         <Signin />
 
@@ -53,10 +62,14 @@ export default function App() {
           <Route element={<SidebarLayout />}>
             <Route path="/" element={<Home />} />
             <Route path="/settings" element={<div>settings</div>} />
+            <Route path="/upcoming-events" element={<UpcomingEvents/>}/>
+            <Route path="/session-recodings" element={<MySession/>}/>
+            <Route path="/interviewer-upcoming-events" element={<InterviewerDashboard/>}/>
+
 
           </Route>
         </Routes>
       </SignedIn>
-    </>
+    </div>
   );
 }
