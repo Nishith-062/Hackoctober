@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import { useApi } from "../../api/useApi";
-
+import { toast } from 'react-hot-toast';
 const SchedulingForm = () => {
+  
+  const [loading,setloading]=useState(false);
   const [formData, setFormData] = useState({
     interviewTitle: "",
     candidateName: "John Doe",
@@ -27,17 +29,24 @@ const SchedulingForm = () => {
   // This is the main function for your logic
   const handleSubmit = async (e) => {
     e.preventDefault(); // Keep this to prevent page reload
-
+    setloading(true);
     const res = await api.post("/interviewer/scheduleInterview", formData);
-
+    
     console.log(res.data);
 
     // --- YOUR FUNCTIONALITY HERE ---
     console.log("Interview Scheduled:", formData);
     // ---
+    
+
 
     // Manually close the modal after logic is done
     document.getElementById("my_modal_1").close();
+
+    toast.success("Successfully Scheduled Interview ")
+    
+    // close loading 
+    setloading(false);
   };
 
   // Simple handler to close modal on "Cancel"
@@ -218,7 +227,7 @@ const SchedulingForm = () => {
             className="btn btn-primary"
             // This will trigger onSubmit, which now also closes the modal
           >
-            Schedule Interview
+            {loading? "Scheduling...":"Schedule"}
           </button>
         </div>
       </form>
