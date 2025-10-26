@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import axios from "axios";
 import {
@@ -12,9 +13,9 @@ import {
 import { Track } from "livekit-client";
 import { useParams } from "react-router-dom";
 import { CollaborativeEditor } from "../../../CollaborativeEditor";
-import { Clock, User, Video } from "lucide-react";
+import { Clock, User, Video, Code2, MessageSquare, Monitor, Play, AlertCircle, CheckCircle, XCircle } from "lucide-react";
 
-// Dummy questions
+// Dummy questions (same as before)
 const questionSet = [
   {
     id: "prob-4",
@@ -86,7 +87,7 @@ function TracksView() {
     onlySubscribed: true,
   });
   return (
-    <div className="w-full rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 aspect-video flex items-center justify-center shadow-lg border border-slate-700">
+    <div className="card bg-base-200 w-full aspect-video flex items-center justify-center">
       {tracks.length > 0 ? (
         <TrackLoop tracks={tracks}>
           <TrackRefContext.Consumer>
@@ -95,10 +96,10 @@ function TracksView() {
         </TrackLoop>
       ) : (
         <div className="flex flex-col items-center">
-          <div className="rounded-full bg-slate-700/50 p-6 mb-3 backdrop-blur-sm">
-            <Video className="w-10 h-10 text-slate-400" />
+          <div className="rounded-full bg-base-300 p-6 mb-3">
+            <Video className="w-10 h-10 opacity-50" />
           </div>
-          <p className="text-slate-400 text-sm font-medium">
+          <p className="text-base-content/70 text-sm font-medium">
             Waiting for video...
           </p>
         </div>
@@ -118,7 +119,7 @@ const InterviewerRoom = () => {
     setRunResult(null);
 
     const code = window.getCollaborativeEditorCode?.(problemId) || "";
-    const language = "python3"; // or dynamically select from your editor
+    const language = "python3";
     const problemSetId = "set-2";
 
     try {
@@ -140,7 +141,7 @@ const InterviewerRoom = () => {
   const activeQuestion = questionSet.find((q) => q.id === activeTab);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
+    <div className="min-h-screen bg-base-100">
       <LiveKitRoom
         token={token}
         serverUrl="wss://hackoctober-y7aeqri9.livekit.cloud"
@@ -151,152 +152,209 @@ const InterviewerRoom = () => {
         <RoomAudioRenderer />
 
         {/* Top Bar */}
-        <div className="absolute top-0 left-0 right-0 h-20 bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50 flex items-center justify-between px-8 z-10 shadow-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <User className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-lg font-semibold text-slate-100">
-                Candidate Name
-              </p>
-              <p className="text-xs text-slate-400">Software Engineer</p>
+        <div className="navbar bg-base-200 shadow-lg border-b border-base-300">
+          <div className="flex-1">
+            <div className="flex items-center gap-3">
+              <div className="avatar placeholder">
+                <div className="bg-primary text-primary-content rounded-full w-10">
+                  <User className="w-5 h-5" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-lg font-bold">Candidate Interview</h1>
+                <p className="text-sm opacity-70">Software Engineer Position</p>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 bg-slate-800/50 px-5 py-2.5 rounded-xl border border-slate-700/50">
-              <Clock className="w-5 h-5 text-blue-400" />
-              <span className="font-mono text-2xl font-semibold text-slate-100 tracking-wider">
+          
+          <div className="flex-none flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-base-300 px-4 py-2 rounded-box">
+              <Clock className="w-4 h-4 text-primary" />
+              <span className="font-mono text-lg font-bold">
                 45:00
               </span>
             </div>
-            <button className="px-5 py-2.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 transition-all duration-200 font-medium">
+            <button className="btn btn-error btn-sm">
               End Interview
             </button>
           </div>
         </div>
 
-        <div className="flex flex-grow mt-20 overflow-hidden">
-          {/* Left Tabbed Questions Panel */}
-          <div className="w-96 bg-slate-900/50 backdrop-blur-sm border-r border-slate-700/50 flex-shrink-0 flex flex-col">
-            <div className="tabs flex flex-col p-4 border-b border-slate-700/50">
-              {questionSet.map((q) => (
-                <button
-                  key={q.id}
-                  className={`tab tab-lifted text-left ${
-                    activeTab === q.id ? "tab-active" : ""
-                  }`}
-                  onClick={() => setActiveTab(q.id)}
-                >
-                  {q.title}
-                </button>
-              ))}
-            </div>
-
-            <div className="p-6 overflow-y-auto flex-grow">
-              {activeQuestion && (
-                <div>
-                  <p className="text-slate-300 leading-relaxed text-sm mb-4">
-                    {activeQuestion.description}
-                  </p>
-
-                  <div className="pt-2 mb-4">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 block">
-                      Constraints
-                    </span>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                      {activeQuestion.constraints?.map((c, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <span className="text-blue-400 mt-0.5">•</span>
-                          <span>{c}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <button
-                    onClick={() => handleRunCode(activeQuestion.id)}
-                    disabled={loading}
-                    className="mb-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                  >
-                    {loading ? "Running..." : "Run Code"}
-                  </button>
-
-                  {runResult && runResult.results && (
-                    <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 block">
-                        Result{" "}
-                        {runResult.allPassed
-                          ? "(All Passed ✅)"
-                          : "(Some Failed ❌)"}
-                      </span>
-
-                      <div className="space-y-3">
-                        {runResult.results.map((r) => (
-                          <div
-                            key={r.test_case_id}
-                            className="p-2 rounded border border-slate-700/40"
-                          >
-                            <div className="flex justify-between items-center mb-1">
-                              <span className="font-mono text-xs text-slate-300">
-                                Test Case #{r.test_case_id}
-                              </span>
-                              <span
-                                className={
-                                  r.passed
-                                    ? "text-green-400 text-sm font-semibold"
-                                    : "text-red-500 text-sm font-semibold"
-                                }
-                              >
-                                {r.passed ? "Passed" : "Failed"}
-                              </span>
-                            </div>
-                            <div className="text-xs text-slate-400 mb-1">
-                              <strong>Input:</strong> {r.input}
-                            </div>
-                            <div className="text-xs text-slate-400 mb-1">
-                              <strong>Expected:</strong> {r.expected_output}
-                            </div>
-                            <div className="text-xs text-slate-400">
-                              <strong>Actual:</strong> {r.actual_output}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {runResult && runResult.error && (
-                    <div className="bg-red-900/50 text-red-300 rounded p-3 mt-2">
-                      <strong>Error:</strong> {runResult.error}
-                    </div>
-                  )}
+        {/* Main Content */}
+        <div className="flex flex-col h-[calc(100vh-64px)]">
+          <div className="flex flex-1 overflow-hidden">
+            {/* Left Sidebar - Problem & Test Cases */}
+            <div className="w-80 bg-base-200 border-r border-base-300 flex flex-col">
+              {/* Problem Tabs */}
+              <div className="p-4 border-b border-base-300">
+                <div className="flex items-center gap-2 mb-3">
+                  <Code2 className="w-4 h-4 text-primary" />
+                  <h3 className="font-semibold">Problems</h3>
                 </div>
-              )}
+                <div className="space-y-2">
+                  {questionSet.map((q) => (
+                    <button
+                      key={q.id}
+                      className={`btn btn-block justify-start ${
+                        activeTab === q.id ? 'btn-primary' : 'btn-ghost'
+                      }`}
+                      onClick={() => setActiveTab(q.id)}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-sm">{q.title}</span>
+                        <span className={`badge ${
+                          q.difficulty === "Easy" ? "badge-success" :
+                          q.difficulty === "Medium" ? "badge-warning" :
+                          "badge-error"
+                        }`}>
+                          {q.difficulty}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Problem Description & Controls */}
+              <div className="flex-1 overflow-y-auto p-4">
+                {activeQuestion && (
+                  <>
+                    {/* Problem Description */}
+                    <div className="mb-6">
+                      <h4 className="font-semibold mb-2">Description</h4>
+                      <p className="text-sm opacity-80 leading-relaxed">
+                        {activeQuestion.description}
+                      </p>
+                    </div>
+
+                    {/* Run Button */}
+                    <button
+                      onClick={() => handleRunCode(activeQuestion.id)}
+                      disabled={loading}
+                      className="btn btn-primary btn-block mb-4"
+                    >
+                      {loading ? (
+                        <>
+                          <span className="loading loading-spinner loading-sm"></span>
+                          Running Tests...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4" />
+                          Run Code
+                        </>
+                      )}
+                    </button>
+
+                    {/* Test Results */}
+                    {runResult && runResult.results && (
+                      <div className="mb-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <h4 className="font-semibold">Test Results</h4>
+                          {runResult.allPassed ? (
+                            <CheckCircle className="w-4 h-4 text-success" />
+                          ) : (
+                            <XCircle className="w-4 h-4 text-error" />
+                          )}
+                        </div>
+                        
+                        <div className="space-y-3">
+                          {runResult.results.map((r, index) => (
+                            <div
+                              key={r.test_case_id || index}
+                              className={`card ${
+                                r.passed ? 'bg-success/20 border-success' : 'bg-error/20 border-error'
+                              } border`}
+                            >
+                              <div className="card-body p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium">
+                                    Test Case {index + 1}
+                                  </span>
+                                  <div className="flex items-center gap-1">
+                                    {r.passed ? (
+                                      <CheckCircle className="w-4 h-4 text-success" />
+                                    ) : (
+                                      <XCircle className="w-4 h-4 text-error" />
+                                    )}
+                                    <span className={`text-sm font-semibold ${
+                                      r.passed ? "text-success" : "text-error"
+                                    }`}>
+                                      {r.passed ? "Passed" : "Failed"}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="text-sm space-y-1">
+                                  <div><strong>Input:</strong> {JSON.stringify(r.input)}</div>
+                                  <div><strong>Expected:</strong> {JSON.stringify(r.expected_output)}</div>
+                                  <div><strong>Actual:</strong> {JSON.stringify(r.actual_output)}</div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {runResult && runResult.error && (
+                      <div className="alert alert-error">
+                        <AlertCircle className="w-4 h-4" />
+                        <span>{runResult.error}</span>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-          </div>
 
-          {/* Collaborative Editor */}
-          <div className="flex-grow bg-slate-950">
-            <CollaborativeEditor
-              currentProblemId={activeTab}
-              initialCode={
-                activeQuestion?.initialCode || { javascript: "", python3: "" }
-              }
-            />
-          </div>
-
-          {/* Right Sidebar */}
-          <div className="flex flex-col w-96 flex-shrink-0 bg-slate-900/50 backdrop-blur-sm border-l border-slate-700/50">
-            <div className="p-5 border-b border-slate-700/50">
-              <h3 className="text-sm font-semibold text-slate-300 mb-3">
-                Participant
-              </h3>
-              <TracksView />
+            {/* Center - Code Editor */}
+            <div className="flex-1 bg-base-100 border-r border-base-300">
+              <div className="h-full flex flex-col">
+                <div className="p-4 border-b border-base-300">
+                  <div className="flex items-center gap-2">
+                    <Monitor className="w-4 h-4 text-primary" />
+                    <h3 className="font-semibold">Code Editor</h3>
+                    {activeQuestion && (
+                      <span className="text-sm opacity-70 ml-2">
+                        {activeQuestion.title}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <CollaborativeEditor
+                    currentProblemId={activeTab}
+                    initialCode={
+                      activeQuestion?.initialCode || { javascript: "", python3: "" }
+                    }
+                  />
+                </div>
+              </div>
             </div>
 
-            <div className="flex-grow p-5 overflow-y-auto">
-              <Chat />
+            {/* Right Sidebar - Video & Chat */}
+            <div className="w-96 bg-base-200 flex flex-col">
+              {/* Video Section */}
+              <div className="p-4 border-b border-base-300">
+                <div className="flex items-center gap-2 mb-3">
+                  <Video className="w-4 h-4 text-primary" />
+                  <h3 className="font-semibold">Candidate Video</h3>
+                </div>
+                <TracksView />
+              </div>
+
+              {/* Chat Section */}
+              <div className="flex-1 flex flex-col">
+                <div className="p-4 border-b border-base-300">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-4 h-4 text-primary" />
+                    <h3 className="font-semibold">Chat</h3>
+                  </div>
+                </div>
+                <div className="flex-1 p-4">
+                  <Chat />
+                </div>
+              </div>
             </div>
           </div>
         </div>

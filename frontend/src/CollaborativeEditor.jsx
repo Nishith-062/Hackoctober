@@ -153,8 +153,6 @@ export function CollaborativeEditor() {
   const others = useOthers();
   const [yProvider, setYProvider] = useState(null);
 
-  
-
   // Initialize compiler options based on selected language
   useEffect(() => {
     const config = LANGUAGE_CONFIGS[selectedLanguage];
@@ -200,15 +198,15 @@ export function CollaborativeEditor() {
 
   const editorRefCurrent = React.useRef(null);
 
-const handleOnMount = useCallback((editor) => {
-  editorRefCurrent.current = editor;
-  setEditorRef(editor);
-}, []);
+  const handleOnMount = useCallback((editor) => {
+    editorRefCurrent.current = editor;
+    setEditorRef(editor);
+  }, []);
 
-window.getCollaborativeEditorCode = (problemId) => {
-  if (!editorRefCurrent.current) return "";
-  return editorRefCurrent.current.getValue();
-};
+  window.getCollaborativeEditorCode = (problemId) => {
+    if (!editorRefCurrent.current) return "";
+    return editorRefCurrent.current.getValue();
+  };
 
   const handleLanguageChange = (event) => {
     setSelectedLanguage(event.target.value);
@@ -233,11 +231,13 @@ window.getCollaborativeEditorCode = (problemId) => {
 
   if (!isLoaded) {
     return (
-      <div className="h-screen flex items-center justify-center bg-gray-900 text-white">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto mb-4"></div>
-          <div className="text-lg">Initializing collaborative editor...</div>
-          <div className="text-sm text-gray-400 mt-2">Connecting to room</div>
+      <div className="hero min-h-screen bg-base-200">
+        <div className="hero-content text-center">
+          <div className="max-w-md">
+            <span className="loading loading-spinner loading-lg text-primary"></span>
+            <h1 className="text-2xl font-bold mt-4">Initializing collaborative editor...</h1>
+            <p className="py-4">Connecting to room</p>
+          </div>
         </div>
       </div>
     );
@@ -247,118 +247,128 @@ window.getCollaborativeEditorCode = (problemId) => {
   const compilerOptionsUI = COMPILER_OPTIONS_UI[selectedLanguage] || [];
 
   return (
-    <div className="h-[70vh] flex flex-col bg-gray-900">
+    <div className="card bg-base-100 h-full flex flex-col">
       {/* Header with language selector and settings */}
-      <div className="bg-gray-800 text-white p-4 flex justify-between items-center border-b border-gray-700">
-        <div className="flex items-center space-x-4">
-          <select 
-            value={selectedLanguage} 
-            onChange={handleLanguageChange}
-            className="bg-gray-700 text-white px-3 py-2 rounded border border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            {Object.entries(LANGUAGE_CONFIGS).map(([key, config]) => (
-              <option key={key} value={key}>{config.name}</option>
-            ))}
-          </select>
-          
-          <button
-            onClick={() => setShowSettings(!showSettings)}
-            className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded transition-colors"
-          >
-            {showSettings ? "Hide Settings" : "Compiler Options"}
-          </button>
-        </div>
-        
-        <div className="text-sm text-gray-300">
-          Connected users: {others.length + 1}
-        </div>
-      </div>
-
-      {/* Compiler Options Panel */}
-      {showSettings && (
-        <div className="bg-gray-800 text-white p-4 border-b border-gray-700">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="font-semibold">Compiler Options for {currentLanguageConfig.name}</h3>
-            <button
-              onClick={resetCompilerOptions}
-              className="bg-gray-700 hover:bg-gray-600 px-3 py-1 rounded text-sm transition-colors"
+      <div className="card-body p-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-4">
+          <div className="flex flex-wrap items-center gap-2">
+            <select 
+              value={selectedLanguage} 
+              onChange={handleLanguageChange}
+              className="select select-bordered select-sm"
             >
-              Reset to Defaults
+              {Object.entries(LANGUAGE_CONFIGS).map(([key, config]) => (
+                <option key={key} value={key}>{config.name}</option>
+              ))}
+            </select>
+            
+            <button
+              onClick={() => setShowSettings(!showSettings)}
+              className="btn btn-sm btn-primary"
+            >
+              {showSettings ? "Hide Settings" : "Compiler Options"}
             </button>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {compilerOptionsUI.map((option) => (
-              <div key={option.key} className="flex flex-col">
-                <label className="text-sm text-gray-300 mb-1">{option.label}</label>
-                {option.type === "boolean" ? (
-                  <input
-                    type="checkbox"
-                    checked={!!compilerOptions[option.key]}
-                    onChange={(e) => handleCompilerOptionChange(option.key, e.target.checked)}
-                    className="w-4 h-4"
-                  />
-                ) : option.type === "select" ? (
-                  <select
-                    value={compilerOptions[option.key] || ""}
-                    onChange={(e) => handleCompilerOptionChange(option.key, e.target.value)}
-                    className="bg-gray-700 text-white px-2 py-1 rounded border border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  >
-                    {option.options.map(opt => (
-                      <option key={opt} value={opt}>{opt}</option>
-                    ))}
-                  </select>
-                ) : (
-                  <input
-                    type="text"
-                    value={compilerOptions[option.key] || ""}
-                    onChange={(e) => handleCompilerOptionChange(option.key, e.target.value)}
-                    className="bg-gray-700 text-white px-2 py-1 rounded border border-gray-600 focus:outline-none focus:ring-1 focus:ring-blue-500"
-                  />
-                )}
-              </div>
-            ))}
+          <div className="badge badge-outline">
+            Connected users: {others.length + 1}
           </div>
-          
-          {/* Display current compiler options as JSON for debugging */}
-          <details className="mt-4">
-            <summary className="cursor-pointer text-sm text-gray-400">Debug: Current Compiler Options</summary>
-            <pre className="text-xs bg-gray-900 p-2 mt-2 rounded overflow-auto">
-              {JSON.stringify(compilerOptions, null, 2)}
-            </pre>
-          </details>
         </div>
-      )}
 
-      {/* Editor */}
-      <div className="flex-1">
-        <Editor
-          onMount={handleOnMount}
-          height="100%"
-          width="100%"
-          theme="vs-dark"
-          language={selectedLanguage}
-          value={currentLanguageConfig.defaultCode}
-          options={{
-            tabSize: 2,
-            minimap: { enabled: true },
-            fontSize: 14,
-            wordWrap: "on",
-            automaticLayout: true,
-            scrollBeyondLastLine: false,
-            formatOnType: true,
-            formatOnPaste: true,
-            suggestOnTriggerCharacters: true,
-            quickSuggestions: true,
-            ...compilerOptions
-          }}
-        />
-      </div>
+        {/* Compiler Options Panel */}
+        {showSettings && (
+          <div className="collapse collapse-arrow bg-base-200 mb-4">
+            <input type="checkbox" defaultChecked />
+            <div className="collapse-title text-lg font-medium">
+              Compiler Options for {currentLanguageConfig.name}
+            </div>
+            <div className="collapse-content">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-semibold">Settings</h3>
+                <button
+                  onClick={resetCompilerOptions}
+                  className="btn btn-sm btn-ghost"
+                >
+                  Reset to Defaults
+                </button>
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {compilerOptionsUI.map((option) => (
+                  <div key={option.key} className="form-control">
+                    <label className="label">
+                      <span className="label-text">{option.label}</span>
+                    </label>
+                    {option.type === "boolean" ? (
+                      <input
+                        type="checkbox"
+                        checked={!!compilerOptions[option.key]}
+                        onChange={(e) => handleCompilerOptionChange(option.key, e.target.checked)}
+                        className="toggle toggle-primary"
+                      />
+                    ) : option.type === "select" ? (
+                      <select
+                        value={compilerOptions[option.key] || ""}
+                        onChange={(e) => handleCompilerOptionChange(option.key, e.target.value)}
+                        className="select select-bordered select-sm"
+                      >
+                        {option.options.map(opt => (
+                          <option key={opt} value={opt}>{opt}</option>
+                        ))}
+                      </select>
+                    ) : (
+                      <input
+                        type="text"
+                        value={compilerOptions[option.key] || ""}
+                        onChange={(e) => handleCompilerOptionChange(option.key, e.target.value)}
+                        className="input input-bordered input-sm"
+                      />
+                    )}
+                  </div>
+                ))}
+              </div>
+              
+              {/* Display current compiler options as JSON for debugging */}
+              <details className="mt-4">
+                <summary className="cursor-pointer text-sm opacity-70">Debug: Current Compiler Options</summary>
+                <pre className="text-xs bg-base-300 p-2 mt-2 rounded overflow-auto">
+                  {JSON.stringify(compilerOptions, null, 2)}
+                </pre>
+              </details>
+            </div>
+          </div>
+        )}
 
-      {/* Status Bar */}
-      <div className="bg-gray-800 text-white px-4 py-2 text-sm border-t border-gray-700 flex justify-between">
-        <span>Language: {currentLanguageConfig.name}</span>
-        <span>Line endings: LF • UTF-8 • {room.id}</span>
+        {/* Editor */}
+        <div className="flex-1 min-h-0">
+          <Editor
+            onMount={handleOnMount}
+            height="100%"
+            width="100%"
+            theme="vs-dark"
+            language={selectedLanguage}
+            value={currentLanguageConfig.defaultCode}
+            options={{
+              tabSize: 2,
+              minimap: { enabled: true },
+              fontSize: 14,
+              wordWrap: "on",
+              automaticLayout: true,
+              scrollBeyondLastLine: false,
+              formatOnType: true,
+              formatOnPaste: true,
+              suggestOnTriggerCharacters: true,
+              quickSuggestions: true,
+              ...compilerOptions
+            }}
+          />
+        </div>
+
+        {/* Status Bar */}
+        <div className="flex justify-between items-center mt-2 text-sm opacity-70">
+          <span>Language: {currentLanguageConfig.name}</span>
+          <span>Line endings: LF • UTF-8 • {room.id}</span>
+        </div>
       </div>
     </div>
   );
