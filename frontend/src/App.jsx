@@ -28,6 +28,7 @@ import {
 import { CollaborativeEditor } from "./CollaborativeEditor";
 import { client } from "../liveblocks.config";
 import CandidateRoom from "./pages/candiates/CandidateRoom/CandidateRoom";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   const navigate = useNavigate();
@@ -92,6 +93,7 @@ export default function App() {
           </RoomProvider>
         </LiveblocksProvider>
       </SignedIn>
+      <Toaster/>
     </div>
   );
 }

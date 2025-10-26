@@ -14,21 +14,20 @@ import {
 import { Track } from "livekit-client";
 import { useParams } from "react-router-dom";
 import { CollaborativeEditor } from "../../../CollaborativeEditor";
-import { Clock, User, Video } from "lucide-react";
+import { Clock, User, Video, Play, CheckCircle, XCircle, AlertCircle } from "lucide-react";
 
-// Dummy questions
 // Dummy questions
 const questionSet = [
   {
     id: "prob-4",
     title: "Two Sum",
-    description: "Return indices of two numbers that sum to target.",
+    description: "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
     difficulty: "Medium",
     initialCode: {
       javascript:
         "function twoSum(nums, target) {\n    // Write your code here\n    for(let i=0;i<nums.length;i++){\n        for(let j=i+1;j<nums.length;j++){\n            if(nums[i]+nums[j]===target) return [i,j];\n        }\n    }\n    return [];\n}",
       python3:
-        "def two_sum(nums, target):\n    # Write your code here\n    for i in range(len(nums)):\n        for j in range(i+1, len(nums)):\n            if nums[i]+nums[j]==target: return [i,j]\n    return [];",
+        "def two_sum(nums, target):\n    # Write your code here\n    for i in range(len(nums)):\n        for j in range(i+1, len(nums)):\n            if nums[i]+nums[j]==target: return [i,j]\n    return []",
     },
     testCases: [
       { input: [[2, 7, 11, 15], 9], output: [0, 1], is_hidden: false },
@@ -36,11 +35,17 @@ const questionSet = [
       { input: [[1, 1, 2], 2], output: [0, 1], is_hidden: true },
     ],
     hints: ["Use nested loops", "Check all pairs"],
+    constraints: [
+      "2 <= nums.length <= 10^4",
+      "-10^9 <= nums[i] <= 10^9",
+      "-10^9 <= target <= 10^9",
+      "Only one valid answer exists"
+    ]
   },
   {
     id: "prob-5",
     title: "Remove Duplicates",
-    description: "Remove duplicates from a sorted array.",
+    description: "Given an integer array nums sorted in non-decreasing order, remove the duplicates in-place such that each unique element appears only once. The relative order of the elements should be kept the same.",
     difficulty: "Medium",
     initialCode: {
       javascript:
@@ -54,11 +59,16 @@ const questionSet = [
       { input: [[0, 0, 0, 0]], output: [0], is_hidden: true },
     ],
     hints: ["Use set or hashmap"],
+    constraints: [
+      "1 <= nums.length <= 3 * 10^4",
+      "-100 <= nums[i] <= 100",
+      "nums is sorted in non-decreasing order"
+    ]
   },
   {
     id: "prob-6",
     title: "Rotate Array",
-    description: "Rotate array to the right by k steps.",
+    description: "Given an array, rotate the array to the right by k steps, where k is non-negative.",
     difficulty: "Medium",
     initialCode: {
       javascript:
@@ -80,9 +90,13 @@ const questionSet = [
       { input: [[1, 2, 3], 4], output: [3, 1, 2], is_hidden: true },
     ],
     hints: ["Use slicing or reverse segments"],
+    constraints: [
+      "1 <= nums.length <= 10^5",
+      "-2^31 <= nums[i] <= 2^31 - 1",
+      "0 <= k <= 10^5"
+    ]
   },
 ];
-
 
 // Video track component
 function TracksView() {
@@ -90,7 +104,7 @@ function TracksView() {
     onlySubscribed: true,
   });
   return (
-    <div className="w-full rounded-xl overflow-hidden bg-gradient-to-br from-slate-800 to-slate-900 aspect-video flex items-center justify-center shadow-lg border border-slate-700">
+    <div className="card bg-base-200 w-full aspect-video flex items-center justify-center">
       {tracks.length > 0 ? (
         <TrackLoop tracks={tracks}>
           <TrackRefContext.Consumer>
@@ -99,10 +113,12 @@ function TracksView() {
         </TrackLoop>
       ) : (
         <div className="flex flex-col items-center">
-          <div className="rounded-full bg-slate-700/50 p-6 mb-3 backdrop-blur-sm">
-            <Video className="w-10 h-10 text-slate-400" />
+          <div className="rounded-full bg-base-300 p-6 mb-3">
+            <Video className="w-10 h-10 opacity-50" />
           </div>
-          <p className="text-slate-400 text-sm font-medium">Waiting for video...</p>
+          <p className="text-base-content/70 text-sm font-medium">
+            Waiting for video...
+          </p>
         </div>
       )}
     </div>
@@ -142,7 +158,7 @@ const CandidateRoom = () => {
   const activeQuestion = questionSet.find((q) => q.id === activeTab);
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-slate-950 via-slate-900 to-slate-950 text-slate-100">
+    <div className="min-h-screen bg-base-100">
       <LiveKitRoom
         token={token}
         serverUrl="wss://hackoctober-y7aeqri9.livekit.cloud"
@@ -153,121 +169,223 @@ const CandidateRoom = () => {
         <RoomAudioRenderer />
 
         {/* Top Bar */}
-        <div className="absolute top-0 left-0 right-0 h-20 bg-slate-900/80 backdrop-blur-xl border-b border-slate-700/50 flex items-center justify-between px-8 z-10 shadow-xl">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center shadow-lg">
-              <User className="w-5 h-5 text-white" />
-            </div>
-            <div>
-              <p className="text-lg font-semibold text-slate-100">Candidate Name</p>
-              <p className="text-xs text-slate-400">Software Engineer</p>
+        <div className="navbar bg-base-200 shadow-lg border-b border-base-300">
+          <div className="flex-1">
+            <div className="flex items-center gap-3">
+              <div className="avatar placeholder">
+                <div className="bg-primary text-primary-content rounded-full w-12">
+                  <User className="w-6 h-6" />
+                </div>
+              </div>
+              <div>
+                <h1 className="text-xl font-bold">Candidate Interview</h1>
+                <p className="text-sm opacity-70">Software Engineer Position</p>
+              </div>
             </div>
           </div>
-          <div className="flex items-center gap-6">
-            <div className="flex items-center gap-3 bg-slate-800/50 px-5 py-2.5 rounded-xl border border-slate-700/50">
-              <Clock className="w-5 h-5 text-blue-400" />
-              <span className="font-mono text-2xl font-semibold text-slate-100 tracking-wider">
+          
+          <div className="flex-none flex items-center gap-4">
+            <div className="flex items-center gap-2 bg-base-300 px-4 py-2 rounded-box">
+              <Clock className="w-5 h-5 text-primary" />
+              <span className="font-mono text-2xl font-bold">
                 45:00
               </span>
             </div>
-            <DisconnectButton className="px-5 py-2.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 transition-all duration-200 font-medium">
-              Exit
+            <DisconnectButton className="btn btn-error btn-sm">
+              Exit Interview
             </DisconnectButton>
           </div>
         </div>
 
-        <div className="flex flex-grow mt-20 overflow-hidden">
-          {/* Left Tabbed Questions Panel */}
-          <div className="w-96 bg-slate-900/50 backdrop-blur-sm border-r border-slate-700/50 flex-shrink-0 flex flex-col">
-            <div className="tabs flex flex-col p-4 border-b border-slate-700/50">
-              {questionSet.map((q) => (
-                <button
-                  key={q.id}
-                  className={`tab tab-lifted text-left ${activeTab === q.id ? "tab-active" : ""}`}
-                  onClick={() => setActiveTab(q.id)}
-                >
-                  {q.title}
-                </button>
-              ))}
-            </div>
-
-            <div className="p-6 overflow-y-auto flex-grow">
-              {activeQuestion && (
-                <div>
-                  <p className="text-slate-300 leading-relaxed text-sm mb-4">{activeQuestion.description}</p>
-
-                  <div className="pt-2 mb-4">
-                    <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 block">
-                      Constraints
-                    </span>
-                    <ul className="space-y-2 text-sm text-slate-400">
-                      {activeQuestion.constraints?.map((c, idx) => (
-                        <li key={idx} className="flex items-start gap-2">
-                          <span className="text-blue-400 mt-0.5">•</span>
-                          <span>{c}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  <button
-                    onClick={() => handleRunCode(activeQuestion.id)}
-                    disabled={loading}
-                    className="mb-4 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50"
-                  >
-                    {loading ? "Running..." : "Run Code"}
-                  </button>
-
-                  {runResult && runResult.results && (
-                    <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
-                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 block">
-                        Result {runResult.allPassed ? "(All Passed ✅)" : "(Some Failed ❌)"}
-                      </span>
-
-                      <div className="space-y-3">
-                        {runResult.results.map((r) => (
-                          <div key={r.test_case_id} className="p-2 rounded border border-slate-700/40">
-                            <div className="flex justify-between items-center mb-1">
-                              <span className="font-mono text-xs text-slate-300">Test Case #{r.test_case_id}</span>
-                              <span className={r.passed ? "text-green-400 text-sm font-semibold" : "text-red-500 text-sm font-semibold"}>
-                                {r.passed ? "Passed" : "Failed"}
-                              </span>
-                            </div>
-                            <div className="text-xs text-slate-400 mb-1"><strong>Input:</strong> {r.input}</div>
-                            <div className="text-xs text-slate-400 mb-1"><strong>Expected:</strong> {r.expected_output}</div>
-                            <div className="text-xs text-slate-400"><strong>Actual:</strong> {r.actual_output}</div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  {runResult && runResult.error && (
-                    <div className="bg-red-900/50 text-red-300 rounded p-3 mt-2">
-                      <strong>Error:</strong> {runResult.error}
-                    </div>
-                  )}
+        {/* Main Content */}
+        <div className="flex flex-col h-[calc(100vh-64px)]">
+          <div className="flex flex-1 overflow-hidden">
+            {/* Left Sidebar - Problems & Test Cases */}
+            <div className="w-96 bg-base-200 border-r border-base-300 flex flex-col">
+              {/* Problem Tabs */}
+              <div className="p-4 border-b border-base-300">
+                <div className="flex items-center gap-2 mb-3">
+                  <h3 className="font-semibold text-lg">Problems</h3>
                 </div>
-              )}
-            </div>
-          </div>
+                <div className="space-y-2">
+                  {questionSet.map((q) => (
+                    <button
+                      key={q.id}
+                      className={`btn btn-block justify-start ${
+                        activeTab === q.id ? 'btn-primary' : 'btn-ghost'
+                      }`}
+                      onClick={() => setActiveTab(q.id)}
+                    >
+                      <div className="flex items-center justify-between w-full">
+                        <span className="text-sm font-medium">{q.title}</span>
+                        <span className={`badge ${
+                          q.difficulty === "Easy" ? "badge-success" :
+                          q.difficulty === "Medium" ? "badge-warning" :
+                          "badge-error"
+                        }`}>
+                          {q.difficulty}
+                        </span>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
 
-          {/* Collaborative Editor */}
-          <div className="flex-grow bg-slate-950">
-            <CollaborativeEditor
-              currentProblemId={activeTab}
-              initialCode={activeQuestion?.initialCode || { javascript: "", python3: "" }}
-            />
-          </div>
+              {/* Problem Details & Test Results */}
+              <div className="flex-1 overflow-y-auto p-4">
+                {activeQuestion && (
+                  <>
+                    {/* Problem Description */}
+                    <div className="mb-6">
+                      <h4 className="font-semibold mb-3 text-lg">{activeQuestion.title}</h4>
+                      <p className="text-base-content/80 leading-relaxed text-sm">
+                        {activeQuestion.description}
+                      </p>
+                    </div>
 
-          {/* Right Sidebar */}
-          <div className="flex flex-col w-96 flex-shrink-0 bg-slate-900/50 backdrop-blur-sm border-l border-slate-700/50">
-            <div className="p-5 border-b border-slate-700/50">
-              <h3 className="text-sm font-semibold text-slate-300 mb-3">Participant</h3>
-              <TracksView />
+                    {/* Constraints */}
+                    <div className="mb-6">
+                      <h5 className="font-semibold mb-2 text-sm uppercase tracking-wide opacity-70">
+                        Constraints
+                      </h5>
+                      <ul className="space-y-2 text-sm text-base-content/70">
+                        {activeQuestion.constraints?.map((constraint, idx) => (
+                          <li key={idx} className="flex items-start gap-2">
+                            <span className="text-primary mt-0.5">•</span>
+                            <span className="font-mono text-xs">{constraint}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+
+                    {/* Run Button */}
+                    <button
+                      onClick={() => handleRunCode(activeQuestion.id)}
+                      disabled={loading}
+                      className="btn btn-primary btn-block mb-4"
+                    >
+                      {loading ? (
+                        <>
+                          <span className="loading loading-spinner loading-sm"></span>
+                          Running Tests...
+                        </>
+                      ) : (
+                        <>
+                          <Play className="w-4 h-4" />
+                          Run Code
+                        </>
+                      )}
+                    </button>
+
+                    {/* Test Results */}
+                    {runResult && runResult.results && (
+                      <div className="mb-4">
+                        <div className="flex items-center gap-2 mb-3">
+                          <h5 className="font-semibold">Test Results</h5>
+                          {runResult.allPassed ? (
+                            <CheckCircle className="w-5 h-5 text-success" />
+                          ) : (
+                            <XCircle className="w-5 h-5 text-error" />
+                          )}
+                        </div>
+                        
+                        <div className="space-y-3">
+                          {runResult.results.map((result, index) => (
+                            <div
+                              key={result.test_case_id || index}
+                              className={`card ${
+                                result.passed ? 'bg-success/20 border-success' : 'bg-error/20 border-error'
+                              } border`}
+                            >
+                              <div className="card-body p-4">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-sm font-medium">
+                                    Test Case {index + 1}
+                                    {result.is_hidden && " (Hidden)"}
+                                  </span>
+                                  <div className="flex items-center gap-1">
+                                    {result.passed ? (
+                                      <CheckCircle className="w-4 h-4 text-success" />
+                                    ) : (
+                                      <XCircle className="w-4 h-4 text-error" />
+                                    )}
+                                    <span className={`text-sm font-semibold ${
+                                      result.passed ? "text-success" : "text-error"
+                                    }`}>
+                                      {result.passed ? "Passed" : "Failed"}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="text-xs space-y-1 font-mono">
+                                  <div><strong>Input:</strong> {JSON.stringify(result.input)}</div>
+                                  <div><strong>Expected:</strong> {JSON.stringify(result.expected_output)}</div>
+                                  <div><strong>Actual:</strong> {JSON.stringify(result.actual_output)}</div>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Error Display */}
+                    {runResult && runResult.error && (
+                      <div className="alert alert-error">
+                        <AlertCircle className="w-4 h-4" />
+                        <span>{runResult.error}</span>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
             </div>
-            <div className="flex-grow p-5 overflow-y-auto">
-              <Chat />
+
+            {/* Center - Collaborative Editor */}
+            <div className="flex-1 bg-base-100 border-r border-base-300">
+              <div className="h-full flex flex-col">
+                <div className="p-4 border-b border-base-300">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold text-lg">Code Editor</h3>
+                    {activeQuestion && (
+                      <span className="text-sm opacity-70 ml-2">
+                        {activeQuestion.title}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <CollaborativeEditor
+                    currentProblemId={activeTab}
+                    initialCode={
+                      activeQuestion?.initialCode || { javascript: "", python3: "" }
+                    }
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Right Sidebar - Video & Chat */}
+            <div className="w-96 bg-base-200 flex flex-col">
+              {/* Video Section */}
+              <div className="p-4 border-b border-base-300">
+                <div className="flex items-center gap-2 mb-3">
+                  <Video className="w-5 h-5 text-primary" />
+                  <h3 className="font-semibold">Your Video</h3>
+                </div>
+                <TracksView />
+              </div>
+
+              {/* Chat Section */}
+              <div className="flex-1 flex flex-col">
+                <div className="p-4 border-b border-base-300">
+                  <div className="flex items-center gap-2">
+                    <h3 className="font-semibold">Interview Chat</h3>
+                  </div>
+                </div>
+                <div className="flex-1 p-4">
+                  <Chat />
+                </div>
+              </div>
             </div>
           </div>
         </div>
