@@ -1,6 +1,7 @@
-
 import React, { useState } from "react";
 import axios from "axios";
+import { Link } from "react-router-dom";
+import { useAuthStore } from "../../../store/useAuthStore.js";
 import {
   LiveKitRoom,
   RoomAudioRenderer,
@@ -13,7 +14,18 @@ import {
 import { Track } from "livekit-client";
 import { useParams } from "react-router-dom";
 import { CollaborativeEditor } from "../../../CollaborativeEditor";
-import { Clock, User, Video, Code2, MessageSquare, Monitor, Play, AlertCircle, CheckCircle, XCircle } from "lucide-react";
+import {
+  Clock,
+  User,
+  Video,
+  Code2,
+  MessageSquare,
+  Monitor,
+  Play,
+  AlertCircle,
+  CheckCircle,
+  XCircle,
+} from "lucide-react";
 
 // Dummy questions (same as before)
 const questionSet = [
@@ -114,6 +126,9 @@ const InterviewerRoom = () => {
   const [runResult, setRunResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const { user } = useAuthStore();
+  console.log("User", user);
+
   const handleRunCode = async (problemId) => {
     setLoading(true);
     setRunResult(null);
@@ -137,6 +152,25 @@ const InterviewerRoom = () => {
       setLoading(false);
     }
   };
+  const handleDelete = async () => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to end this interview?"
+    );
+    if (!confirmDelete) return;
+    try {
+      console.log("called Api");
+      const res = await axios.delete(
+        `http://localhost:3000/api/interviewer/end`
+      );
+      if (res.status === 200) {
+        alert("✅ Interview ended successfully");
+        window.location.href = "/interviewer-upcoming-event";
+      }
+    } catch (error) {
+      console.error("Error ending interview:", error);
+      alert("❌ Failed to end the interview. Try again.");
+    }
+  };
 
   const activeQuestion = questionSet.find((q) => q.id === activeTab);
 
@@ -148,6 +182,7 @@ const InterviewerRoom = () => {
         connect
         audio
         video={false}
+        onDisconnected={handleDelete}
       >
         <RoomAudioRenderer />
 
@@ -166,17 +201,19 @@ const InterviewerRoom = () => {
               </div>
             </div>
           </div>
-          
+
           <div className="flex-none flex items-center gap-4">
             <div className="flex items-center gap-2 bg-base-300 px-4 py-2 rounded-box">
               <Clock className="w-4 h-4 text-primary" />
-              <span className="font-mono text-lg font-bold">
-                45:00
-              </span>
+              <span className="font-mono text-lg font-bold">45:00</span>
             </div>
-            <button className="btn btn-error btn-sm">
+            <button className="btn btn-error btn-sm" onClick={handleDelete}>
               End Interview
             </button>
+
+            <Link to="/feedback-page">
+              <button className="btn btn-success btn-sm">Feedback</button>
+            </Link>
           </div>
         </div>
 
@@ -196,17 +233,21 @@ const InterviewerRoom = () => {
                     <button
                       key={q.id}
                       className={`btn btn-block justify-start ${
-                        activeTab === q.id ? 'btn-primary' : 'btn-ghost'
+                        activeTab === q.id ? "btn-primary" : "btn-ghost"
                       }`}
                       onClick={() => setActiveTab(q.id)}
                     >
                       <div className="flex items-center justify-between w-full">
                         <span className="text-sm">{q.title}</span>
-                        <span className={`badge ${
-                          q.difficulty === "Easy" ? "badge-success" :
-                          q.difficulty === "Medium" ? "badge-warning" :
-                          "badge-error"
-                        }`}>
+                        <span
+                          className={`badge ${
+                            q.difficulty === "Easy"
+                              ? "badge-success"
+                              : q.difficulty === "Medium"
+                              ? "badge-warning"
+                              : "badge-error"
+                          }`}
+                        >
                           {q.difficulty}
                         </span>
                       </div>
@@ -257,13 +298,15 @@ const InterviewerRoom = () => {
                             <XCircle className="w-4 h-4 text-error" />
                           )}
                         </div>
-                        
+
                         <div className="space-y-3">
                           {runResult.results.map((r, index) => (
                             <div
                               key={r.test_case_id || index}
                               className={`card ${
-                                r.passed ? 'bg-success/20 border-success' : 'bg-error/20 border-error'
+                                r.passed
+                                  ? "bg-success/20 border-success"
+                                  : "bg-error/20 border-error"
                               } border`}
                             >
                               <div className="card-body p-4">
@@ -277,17 +320,28 @@ const InterviewerRoom = () => {
                                     ) : (
                                       <XCircle className="w-4 h-4 text-error" />
                                     )}
-                                    <span className={`text-sm font-semibold ${
-                                      r.passed ? "text-success" : "text-error"
-                                    }`}>
+                                    <span
+                                      className={`text-sm font-semibold ${
+                                        r.passed ? "text-success" : "text-error"
+                                      }`}
+                                    >
                                       {r.passed ? "Passed" : "Failed"}
                                     </span>
                                   </div>
                                 </div>
                                 <div className="text-sm space-y-1">
-                                  <div><strong>Input:</strong> {JSON.stringify(r.input)}</div>
-                                  <div><strong>Expected:</strong> {JSON.stringify(r.expected_output)}</div>
-                                  <div><strong>Actual:</strong> {JSON.stringify(r.actual_output)}</div>
+                                  <div>
+                                    <strong>Input:</strong>{" "}
+                                    {JSON.stringify(r.input)}
+                                  </div>
+                                  <div>
+                                    <strong>Expected:</strong>{" "}
+                                    {JSON.stringify(r.expected_output)}
+                                  </div>
+                                  <div>
+                                    <strong>Actual:</strong>{" "}
+                                    {JSON.stringify(r.actual_output)}
+                                  </div>
                                 </div>
                               </div>
                             </div>
@@ -325,7 +379,10 @@ const InterviewerRoom = () => {
                   <CollaborativeEditor
                     currentProblemId={activeTab}
                     initialCode={
-                      activeQuestion?.initialCode || { javascript: "", python3: "" }
+                      activeQuestion?.initialCode || {
+                        javascript: "",
+                        python3: "",
+                      }
                     }
                   />
                 </div>

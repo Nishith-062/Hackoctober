@@ -29,6 +29,7 @@ import { CollaborativeEditor } from "./CollaborativeEditor";
 import { client } from "../liveblocks.config";
 import CandidateRoom from "./pages/candiates/CandidateRoom/CandidateRoom";
 import { Toaster } from "react-hot-toast";
+import Feedback from "./components/interviewerComponents/Feedback";
 
 export default function App() {
   const navigate = useNavigate();
@@ -78,6 +79,10 @@ export default function App() {
                   path="/interviewer-upcoming-events"
                   element={<InterviewerDashboard />}
                 />
+                <Route
+                 path="/feedback-page"
+                 element={<Feedback/>}
+                ></Route>
                 <Route
                   path="/code"
                   element={
