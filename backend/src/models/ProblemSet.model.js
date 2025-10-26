@@ -1,28 +1,10 @@
+// models/ProblemSet.js
 import mongoose from "mongoose";
 
-const ProblemsetSchema=new mongoose.Schema({
-       problemset_name:{
-        type:String,
-        required:true
-     },
-     description:{
-        type:String,
-        required:true,
-     },
-     programming_languages:{
-        type:String,
-     },
-     difficulty:{
-        type:String,
-        enum:["easy","medium","hard"],
-        required:true,
-        default:"easy"
-     },
-    },
-    {
-    timestamps: { createdAt: "created_at", updatedAt: false },
-  }
-);
+const problemSetSchema = new mongoose.Schema({
+  title: { type: String, required: true },
+  duration: { type: Number, required: true }, // in minutes
+  difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], required: true },
+});
 
-const Problem_set=mongoose.model("ProblemSet",ProblemsetSchema);
-export default Problem_set
+export default mongoose.model("ProblemSet", problemSetSchema);

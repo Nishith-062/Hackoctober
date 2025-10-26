@@ -1,24 +1,15 @@
+// models/TestCase.js
 import mongoose from "mongoose";
 
-const test_caseSchema=new mongoose.Schema({
-   input_data:{
-    type:String,
-    required:true,
+const testCaseSchema = new mongoose.Schema({
+  problem_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Problem",
+    required: true,
   },
-  expected_output:{
-     type:String,
-     required:true
-  },
-  is_hidded:{
-    type:Boolean,
-    require:true,
-    default:false
-  },
-  problem_id:{
-    type:mongoose.Schema.Types.ObjectId,
-    ref:"Problem"
-  }
+  input: { type: [mongoose.Schema.Types.Mixed], required: true },
+  output: { type: mongoose.Schema.Types.Mixed, required: true },
+  is_hidden: { type: Boolean, default: false },
 });
 
-const Test_Case= mongoose.model("Test_Case",test_caseSchema);
-export  default Test_Case;
+export default mongoose.model("TestCase", testCaseSchema);

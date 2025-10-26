@@ -40,6 +40,7 @@ export const joinRoom=async (req,res) => {
     room: roomName,
     roomJoin: true,
     canPublish: true,
+    
     canSubscribe: true,
   };
 

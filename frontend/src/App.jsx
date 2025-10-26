@@ -27,6 +27,7 @@ import {
 } from "@liveblocks/react/suspense";
 import { CollaborativeEditor } from "./CollaborativeEditor";
 import { client } from "../liveblocks.config";
+import CandidateRoom from "./pages/candiates/CandidateRoom/CandidateRoom";
 
 export default function App() {
   const navigate = useNavigate();
@@ -84,11 +85,9 @@ export default function App() {
                     </ClientSideSuspense>
                   }
                 />
-                <Route
-                  path="/interviwer/:token"
-                  element={<InterviewerRoom />}
-                />
               </Route>
+              <Route path="/interviwer/:token" element={<InterviewerRoom />} />
+              <Route path="/candidate/:token" element={<CandidateRoom />} />
             </Routes>
           </RoomProvider>
         </LiveblocksProvider>

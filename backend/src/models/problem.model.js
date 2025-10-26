@@ -1,35 +1,25 @@
+// models/Problem.js
 import mongoose from "mongoose";
 
-const problemSchema =new mongoose.Schema({
-    title:{
-        type:String,
-    },
-    description:{
-        type:String,
-        required:true
-    },
-    start_code:{
-        type:String,
-        required:true
-    },
-    solution:{
-        type:String,
-        required:true
-    },
-    problem_type:{
-        type:String,
-        required:true
-    },
-     problemset_id:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:"ProblemSet",
-     }
-},
-{
-      timestamps: { createdAt: "created_at", updatedAt: false },
-}
-     
-)
+const initialCodeSchema = new mongoose.Schema({
+  javascript: String,
+  python3: String,
+  cpp: String,
+  c: String,
+  java: String,
+});
 
-const Problem = mongoose.model("Problem",problemSchema);
-export default Problem;
+const problemSchema = new mongoose.Schema({
+  problem_set_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "ProblemSet",
+    required: true,
+  },
+  title: { type: String, required: true },
+  description: { type: String, required: true },
+  difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], required: true },
+  initialCode: initialCodeSchema,
+  hints: [String],
+});
+
+export default mongoose.model("Problem", problemSchema);

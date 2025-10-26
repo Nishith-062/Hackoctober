@@ -8,12 +8,15 @@ import {
   VideoTrack,
   TrackLoop,
   Chat,
+  ControlBar,
+  DisconnectButton,
 } from "@livekit/components-react";
 import { Track } from "livekit-client";
 import { useParams } from "react-router-dom";
 import { CollaborativeEditor } from "../../../CollaborativeEditor";
 import { Clock, User, Video } from "lucide-react";
 
+// Dummy questions
 // Dummy questions
 const questionSet = [
   {
@@ -80,6 +83,7 @@ const questionSet = [
   },
 ];
 
+
 // Video track component
 function TracksView() {
   const tracks = useTracks([{ source: Track.Source.Camera }], {
@@ -98,16 +102,14 @@ function TracksView() {
           <div className="rounded-full bg-slate-700/50 p-6 mb-3 backdrop-blur-sm">
             <Video className="w-10 h-10 text-slate-400" />
           </div>
-          <p className="text-slate-400 text-sm font-medium">
-            Waiting for video...
-          </p>
+          <p className="text-slate-400 text-sm font-medium">Waiting for video...</p>
         </div>
       )}
     </div>
   );
 }
 
-const InterviewerRoom = () => {
+const CandidateRoom = () => {
   const { token } = useParams();
   const [activeTab, setActiveTab] = useState(questionSet[0].id);
   const [runResult, setRunResult] = useState(null);
@@ -118,7 +120,7 @@ const InterviewerRoom = () => {
     setRunResult(null);
 
     const code = window.getCollaborativeEditorCode?.(problemId) || "";
-    const language = "python3"; // or dynamically select from your editor
+    const language = "python3"; 
     const problemSetId = "set-2";
 
     try {
@@ -146,7 +148,7 @@ const InterviewerRoom = () => {
         serverUrl="wss://hackoctober-y7aeqri9.livekit.cloud"
         connect
         audio
-        video={false}
+        video
       >
         <RoomAudioRenderer />
 
@@ -157,9 +159,7 @@ const InterviewerRoom = () => {
               <User className="w-5 h-5 text-white" />
             </div>
             <div>
-              <p className="text-lg font-semibold text-slate-100">
-                Candidate Name
-              </p>
+              <p className="text-lg font-semibold text-slate-100">Candidate Name</p>
               <p className="text-xs text-slate-400">Software Engineer</p>
             </div>
           </div>
@@ -170,9 +170,9 @@ const InterviewerRoom = () => {
                 45:00
               </span>
             </div>
-            <button className="px-5 py-2.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 transition-all duration-200 font-medium">
-              End Interview
-            </button>
+            <DisconnectButton className="px-5 py-2.5 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 transition-all duration-200 font-medium">
+              Exit
+            </DisconnectButton>
           </div>
         </div>
 
@@ -183,9 +183,7 @@ const InterviewerRoom = () => {
               {questionSet.map((q) => (
                 <button
                   key={q.id}
-                  className={`tab tab-lifted text-left ${
-                    activeTab === q.id ? "tab-active" : ""
-                  }`}
+                  className={`tab tab-lifted text-left ${activeTab === q.id ? "tab-active" : ""}`}
                   onClick={() => setActiveTab(q.id)}
                 >
                   {q.title}
@@ -196,9 +194,7 @@ const InterviewerRoom = () => {
             <div className="p-6 overflow-y-auto flex-grow">
               {activeQuestion && (
                 <div>
-                  <p className="text-slate-300 leading-relaxed text-sm mb-4">
-                    {activeQuestion.description}
-                  </p>
+                  <p className="text-slate-300 leading-relaxed text-sm mb-4">{activeQuestion.description}</p>
 
                   <div className="pt-2 mb-4">
                     <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 block">
@@ -225,41 +221,21 @@ const InterviewerRoom = () => {
                   {runResult && runResult.results && (
                     <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700/50">
                       <span className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-2 block">
-                        Result{" "}
-                        {runResult.allPassed
-                          ? "(All Passed ✅)"
-                          : "(Some Failed ❌)"}
+                        Result {runResult.allPassed ? "(All Passed ✅)" : "(Some Failed ❌)"}
                       </span>
 
                       <div className="space-y-3">
                         {runResult.results.map((r) => (
-                          <div
-                            key={r.test_case_id}
-                            className="p-2 rounded border border-slate-700/40"
-                          >
+                          <div key={r.test_case_id} className="p-2 rounded border border-slate-700/40">
                             <div className="flex justify-between items-center mb-1">
-                              <span className="font-mono text-xs text-slate-300">
-                                Test Case #{r.test_case_id}
-                              </span>
-                              <span
-                                className={
-                                  r.passed
-                                    ? "text-green-400 text-sm font-semibold"
-                                    : "text-red-500 text-sm font-semibold"
-                                }
-                              >
+                              <span className="font-mono text-xs text-slate-300">Test Case #{r.test_case_id}</span>
+                              <span className={r.passed ? "text-green-400 text-sm font-semibold" : "text-red-500 text-sm font-semibold"}>
                                 {r.passed ? "Passed" : "Failed"}
                               </span>
                             </div>
-                            <div className="text-xs text-slate-400 mb-1">
-                              <strong>Input:</strong> {r.input}
-                            </div>
-                            <div className="text-xs text-slate-400 mb-1">
-                              <strong>Expected:</strong> {r.expected_output}
-                            </div>
-                            <div className="text-xs text-slate-400">
-                              <strong>Actual:</strong> {r.actual_output}
-                            </div>
+                            <div className="text-xs text-slate-400 mb-1"><strong>Input:</strong> {r.input}</div>
+                            <div className="text-xs text-slate-400 mb-1"><strong>Expected:</strong> {r.expected_output}</div>
+                            <div className="text-xs text-slate-400"><strong>Actual:</strong> {r.actual_output}</div>
                           </div>
                         ))}
                       </div>
@@ -280,21 +256,16 @@ const InterviewerRoom = () => {
           <div className="flex-grow bg-slate-950">
             <CollaborativeEditor
               currentProblemId={activeTab}
-              initialCode={
-                activeQuestion?.initialCode || { javascript: "", python3: "" }
-              }
+              initialCode={activeQuestion?.initialCode || { javascript: "", python3: "" }}
             />
           </div>
 
           {/* Right Sidebar */}
           <div className="flex flex-col w-96 flex-shrink-0 bg-slate-900/50 backdrop-blur-sm border-l border-slate-700/50">
             <div className="p-5 border-b border-slate-700/50">
-              <h3 className="text-sm font-semibold text-slate-300 mb-3">
-                Participant
-              </h3>
+              <h3 className="text-sm font-semibold text-slate-300 mb-3">Participant</h3>
               <TracksView />
             </div>
-
             <div className="flex-grow p-5 overflow-y-auto">
               <Chat />
             </div>
@@ -305,4 +276,4 @@ const InterviewerRoom = () => {
   );
 };
 
-export default InterviewerRoom;
+export default CandidateRoom;

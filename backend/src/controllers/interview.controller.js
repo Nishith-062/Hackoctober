@@ -2,6 +2,7 @@ import Interview from "../models/Interview.model.js";
 import { User } from "../models/user.model.js";
 import ProblemSet from "../models/problem.model.js";
 import { getAuth } from "@clerk/express";
+import { AccessToken, RoomServiceClient } from "livekit-server-sdk";
 // Schedule a new interview
 export const scheduleInterview = async (req, res) => {
   try {
@@ -171,17 +172,16 @@ export const getInterviewDetails = async (req, res) => {
 
 export const CreateRoom = async (req, res) => {
   try {
-    const {interviewId}=req.body
+    const { interviewId } = req.body;
 
-const interview = await Interview.findById(interviewId);
+    const interview = await Interview.findById(interviewId);
 
-if (!interview) {
-  throw new Error('Interview not found');
-}
+    if (!interview) {
+      throw new Error("Interview not found");
+    }
 
-interview.status = 'in_progress';
-await interview.save();
-
+    interview.status = "in_progress";
+    await interview.save();
 
     const livekitHost = "wss://hackoctober-y7aeqri9.livekit.cloud";
     const roomService = new RoomServiceClient(
@@ -221,7 +221,7 @@ await interview.save();
     const token = await at.toJwt();
     return res.status(200).json({ roomName: "myroom", token: token });
   } catch (error) {
-    console.log(error)
-    res.status(500).json('Internal server error')
+    console.log(error);
+    res.status(500).json("Internal server error");
   }
 };

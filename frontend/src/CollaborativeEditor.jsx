@@ -153,6 +153,8 @@ export function CollaborativeEditor() {
   const others = useOthers();
   const [yProvider, setYProvider] = useState(null);
 
+  
+
   // Initialize compiler options based on selected language
   useEffect(() => {
     const config = LANGUAGE_CONFIGS[selectedLanguage];
@@ -196,9 +198,17 @@ export function CollaborativeEditor() {
     }
   }, [editorRef, yProvider, selectedLanguage]);
 
-  const handleOnMount = useCallback((editor) => {
-    setEditorRef(editor);
-  }, []);
+  const editorRefCurrent = React.useRef(null);
+
+const handleOnMount = useCallback((editor) => {
+  editorRefCurrent.current = editor;
+  setEditorRef(editor);
+}, []);
+
+window.getCollaborativeEditorCode = (problemId) => {
+  if (!editorRefCurrent.current) return "";
+  return editorRefCurrent.current.getValue();
+};
 
   const handleLanguageChange = (event) => {
     setSelectedLanguage(event.target.value);
@@ -237,7 +247,7 @@ export function CollaborativeEditor() {
   const compilerOptionsUI = COMPILER_OPTIONS_UI[selectedLanguage] || [];
 
   return (
-    <div className="h-screen flex flex-col bg-gray-900">
+    <div className="h-[70vh] flex flex-col bg-gray-900">
       {/* Header with language selector and settings */}
       <div className="bg-gray-800 text-white p-4 flex justify-between items-center border-b border-gray-700">
         <div className="flex items-center space-x-4">
