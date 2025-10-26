@@ -5,7 +5,6 @@ import TestCase from "./models/test_case.model.js";
 import problemSets from "./problemSets.js"
 import dotenv from 'dotenv'
 dotenv.config()
-
 const MONGO_URI = 'mongodb+srv://nishithcbit_db_user:TR2zX50SKrytpsTq@cluster0.i0c8jca.mongodb.net/hackoctober?appName=Cluster0' // replace with your DB URL
 
 async function seedDatabase() {

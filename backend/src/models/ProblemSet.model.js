@@ -7,4 +7,6 @@ const problemSetSchema = new mongoose.Schema({
   difficulty: { type: String, enum: ["Easy", "Medium", "Hard"], required: true },
 });
 
-export default mongoose.model("ProblemSet", problemSetSchema);
+
+ const ProblemSet=mongoose.model("ProblemSet", problemSetSchema);
+export default ProblemSet;
