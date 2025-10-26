@@ -6,6 +6,9 @@ import ProblemSet from '../models/ProblemSet.model.js'
 import { getAuth } from "@clerk/express";
 import { AccessToken, RoomServiceClient } from "livekit-server-sdk";
 import { sendInterviewScheduleMail } from "../config/SendScheduleMail.js";
+
+import { sendInterviewFeedbackMail } from "../config/SendFeedbackMail.js"
+
 // Schedule a new interview
 export const scheduleInterview = async (req, res) => {
   try {
@@ -202,5 +205,91 @@ export const CreateRoom = async (req, res) => {
   } catch (error) {
     console.log(error);
     res.status(500).json("Internal server error");
+  }
+};
+
+
+
+
+
+
+
+
+
+// end room
+
+export const EndRoom = async (req, res) => {
+  try {
+    const { userId } = getAuth(req); // logged-in user
+
+
+    const roomName="myroom";
+    if (!userId) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    // Find the ongoing interview for this interviewer
+    const interview = await Interview.findOne({
+      interviewerId: userId,
+      status: "in_progress",
+    });
+
+    if (!interview) {
+      return res.status(404).json({ message: "No ongoing interview found" });
+    }
+
+    if (!interview.roomName) {
+      return res.status(400).json({ message: "Room name is missing in the interview" });
+    }
+
+    // Mark interview as completed
+    interview.status = "completed";
+    await interview.save();
+
+    // Connect to LiveKit server
+    const livekitHost = "wss://hackoctober-y7aeqri9.livekit.cloud";
+    const roomService = new RoomServiceClient(
+      livekitHost,
+      "APItPrLThLXE95E",
+      "jMoEtDq2GE8jdhvzPyNOzXTt9qhpXe0lRdFBWROgTCM"
+    );
+
+    // Delete the room
+    await roomService.deleteRoom(roomName, { force: true });
+    console.log(`Room ${roomName} ended successfully`);
+
+    res.status(200).json({ message: "Interview ended and room deleted successfully" });
+  } catch (error) {
+    console.error("Error ending room:", error);
+    res.status(500).json({ message: "Internal server error", error: error.message });
+  }
+};
+
+
+
+export const Feedback = async (req, res) => {
+  try {
+    const {
+      candidate_email,
+      technical_skills,
+      problem_solving,
+      communication,
+      overall_comments,
+      rating,
+    } = req.body;
+
+    await sendInterviewFeedbackMail(
+      candidate_email,
+      technical_skills,
+      problem_solving,
+      communication,
+      overall_comments,
+      rating
+    );
+
+    return res.status(200).json({ message: "Feedback email sent successfully!" });
+  } catch (e) {
+    console.error("❌ Failed to send feedback email:", e);
+    return res.status(500).json({ error: "Failed to send feedback email" });
   }
 };
