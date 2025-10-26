@@ -20,10 +20,10 @@ export const sendInterviewScheduleMail = async (
   description,
   scheduled_at,
   duration_minutes,
-  interviewer_name,
+  interviewer_name
 ) => {
   const mailOptions = {
-    from: '"" <omkarbiradar266@gmail.com>',
+    from: "omkarbiradar266@gmail.com",
     to,
     subject: `Interview Scheduled: ${title}`,
     html: `
@@ -39,15 +39,11 @@ export const sendInterviewScheduleMail = async (
       </table>
 
       <br/>
-      <p>You can join your interview using the link below:</p>
-
+      <p>You can join your interview using this link:</p>
+      <p><a href="url" target="_blank">Join Interview</a></p>
 
       <br/><br/>
       <p>Please ensure you join on time and have a stable internet connection.</p>
-      <p>Best of luck!</p>
-
-      <br/>
-      <p>Best regards,<br/><strong>MockMate Team</strong></p>
     `,
   };
 
@@ -58,6 +54,3 @@ export const sendInterviewScheduleMail = async (
     console.error("❌ Failed to send email:", err);
   }
 };
-
-
-  

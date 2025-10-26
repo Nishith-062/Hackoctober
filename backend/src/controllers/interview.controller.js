@@ -63,22 +63,21 @@ export const scheduleInterview = async (req, res) => {
     });
  console.log("hello");
     // ✅ Send email before responding
+    const scheduled_atTime = `${date} ${time}`;
     await sendInterviewScheduleMail(
       candidateEmail,
       candidateName,
       title,
       description,
-      duration_minutes,
-      interviewer.email,
-      date,
-      time
+      scheduled_atTime,
+       duration_minutes,
+      interviewer.fullName,
     );
  console.log("hello");
     res.status(201).json({
       message: "Interview scheduled successfully",
       interview,
     });
-
   } catch (error) {
     console.error("❌ Error scheduling interview:", error);
     res.status(500).json({ message: "Server error", error: error.message });
