@@ -114,4 +114,4 @@ This project is licensed under the MIT License.
 * [Nishith-062](https://github.com/Nishith-062)
 * [Bharani Kumar](https://github.com/Bharanikumar55)
 * [Biradar Omkar](https://github.com/biradaromkar2005)
-
+* [G-Sathwik](https://github.com/Sathwik096)
